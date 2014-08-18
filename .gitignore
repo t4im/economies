@@ -1,0 +1,16 @@
+# Eclipse
+.project
+.metadata
+.settings/
+bin/
+
+# Mac stuff
+.DS_Store
+
+# Misc
+tmp/
+*.tmp
+*.bak
+*.swp
+.loadpath
+*~
