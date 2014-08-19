@@ -41,6 +41,7 @@ function BankAccount:set(amount)
 	amount = math.ceil(amount)
 	
 	self.balance = amount
+	self:save()
 end
 
 function BankAccount:get()
@@ -54,6 +55,7 @@ function BankAccount:deposit(amount)
 	end
 	
 	self.balance = self.balance + amount
+	self:save()
 end
 
 function BankAccount:withdraw(amount)
@@ -63,6 +65,7 @@ function BankAccount:withdraw(amount)
 	end
 
 	self.balance = self.balance - amount
+	self:save()
 end
 
 function BankAccount:transferTo(other, amount)
@@ -77,17 +80,21 @@ function BankAccount:transferTo(other, amount)
 	minetest.debug(string.format("Bank: transfering %s from %s to %s.", formatAmount(amount), self.owner, other.owner))
 	self.balance = self.balance - amount
 	other.balance = other.balance + amount
+	self:save()
+	other:save()
 end
 
 function BankAccount:freeze()
 	minetest.debug("Bank: freezing account: " .. self:name())
 	self.frozen = true
+	self:save()
 	minetest.chat_send_player(self.owner, "Your bankaccount has been frozen.")
 end
 
 function BankAccount:unfreeze()
 	minetest.debug("Bank: unfreezing account: " .. self:name())
 	self.frozen = false
+	self:save()
 	minetest.chat_send_player(self.owner, "Your bankaccount has been unfrozen.")
 end
 
