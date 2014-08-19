@@ -9,3 +9,6 @@ economy.bank.modpath = minetest.get_modpath("bank")
 
 -- load configuration
 dofile(economy.bank.modpath.."/config.lua")
+
+-- load accounting class and methods
+dofile(economy.bank.modpath.."/bankaccount.lua")
