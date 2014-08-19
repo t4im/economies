@@ -10,5 +10,10 @@ economy.bank.modpath = minetest.get_modpath("bank")
 -- load configuration
 dofile(economy.bank.modpath.."/config.lua")
 
+-- general helper functions
+function economy.formatMoney(amount)
+	return economy.config:get("currency_format"):format(amount)
+end
+
 -- load accounting class and methods
 dofile(economy.bank.modpath.."/bankaccount.lua")

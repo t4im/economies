@@ -10,13 +10,6 @@ local accountFile = function(name)
 	return minetest.get_worldpath() .. economy.config:get("bank_path") .. "/" .. name .. ".txt"
 end
 
-function economy.formatAmount(amount)
-	local amountFormat = "%d%s"
-	return amountFormat:format(amount, economy.config:get("currency_symbol"))
-end
-
-local formatAmount = economy.formatAmount
-
 -- =============
 -- Account class
 -- =============
@@ -77,7 +70,7 @@ function BankAccount:withdraw(actor, amount)
 		return
 	end
 	if(amount > self.balance) then
-		self:rejectAction(actor, string.filter("Not enough funds. You cannot withdraw more than %s from this account.", formatAmount(amount)))		
+		self:rejectAction(actor, string.filter("Not enough funds. You cannot withdraw more than %s from this account.", economy.formatMoney(amount)))		
 		return
 	end
 
@@ -92,11 +85,11 @@ function BankAccount:transferTo(actor, other, amount)
 		return
 	end
 	if(amount > self.balance) then
-		self:rejectAction(actor, string.filter("Not enough funds. You cannot transfer more than %s from this account.", formatAmount(amount)))		
+		self:rejectAction(actor, string.filter("Not enough funds. You cannot transfer more than %s from this account.", economy.formatMoney(amount)))		
 		return
 	end
 	
-	minetest.debug(string.format("Bank: transfering %s from %s to %s.", formatAmount(amount), self.owner, other.owner))
+	minetest.debug(string.format("Bank: transfering %s from %s to %s.", economy.formatMoney(amount), self.owner, other.owner))
 	self.balance = self.balance - amount
 	other.balance = other.balance + amount
 	self:save()
@@ -126,7 +119,7 @@ function BankAccount:name()
 end
 
 function BankAccount:describe()
-	return string.format("Account '%s' with %s. Status: %s", self:name(), formatAmount(self.balance), self:isFrozen() and "frozen" or "active")
+	return string.format("Account '%s' with %s. Status: %s", self:name(), economy.formatMoney(self.balance), self:isFrozen() and "frozen" or "active")
 end
 
 function BankAccount:save()
@@ -149,7 +142,7 @@ economy.bank.accounts = economy.bank.accounts or {}
 
 function economy.bank.createAccount(name)
 	local initialAmount = math.floor(economy.config:get("initial_amount"))
-	minetest.debug(string.format("Bank: creating account %s with %s", name, formatAmount(initialAmount)))
+	minetest.debug(string.format("Bank: creating account %s with %s", name, economy.formatMoney(initialAmount)))
 	return BankAccount:new{owner=name, balance=initialAmount}
 end
 

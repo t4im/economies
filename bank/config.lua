@@ -5,7 +5,7 @@ local conf_table = economy.config:to_table()
 
 local defaults = {
 	initial_amount = "0",
-	currency_symbol = "cr",
+	currency_format = "%dcr",
 	currency_name = "credit",
 	bank_path = "/bank"
 }
