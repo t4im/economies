@@ -17,3 +17,6 @@ end
 
 -- load accounting class and methods
 dofile(economy.bank.modpath.."/bankaccount.lua")
+
+-- load chatcommands, privileges and administration
+dofile(economy.bank.modpath.."/control.lua")
