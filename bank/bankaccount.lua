@@ -161,3 +161,9 @@ function economy.bank.getAccount(name)
 	
 	return account
 end
+
+-- remove the account from the cache, when the player leaves the game
+-- (crashing will obviously empty it too \o/)
+minetest.register_on_leaveplayer(function(player)
+	economy.bank.accounts[player:get_player_name()] = nil
+end)
