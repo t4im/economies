@@ -34,12 +34,23 @@ function BankAccount:new(object)
 	return object
 end
 
-function BankAccount:set(amount)
-	if(amount < 0) then
-	-- error
-	end
+function BankAccount:rejectAction(actor, message)
+		if(actor) then
+			minetest.chat_send_player(actor, message)
+		else
+			minetest.log("error", string.filter("[Bank] (%s, %s) %s", message))
+		end
+end
+
+function BankAccount:set(actor, amount)
+	-- make sure no one tries to set Pi amount of credits, or similar annoyances
 	amount = math.ceil(amount)
-	
+
+	if(amount < 0) then
+		self:rejectAction(actor, "You cannot set a negative balance.")
+		return
+	end
+
 	self.balance = amount
 	self:save()
 end
@@ -48,33 +59,41 @@ function BankAccount:get()
 	return self.balance or 0
 end
 
-function BankAccount:deposit(amount)
+function BankAccount:deposit(actor, amount)
 	amount = math.ceil(amount)
 	if(amount < 0) then
-	-- error
+		self:rejectAction(actor, "You cannot deposit a negative amount.")
+		return
 	end
 	
 	self.balance = self.balance + amount
 	self:save()
 end
 
-function BankAccount:withdraw(amount)
+function BankAccount:withdraw(actor, amount)
 	amount = math.ceil(amount)
 	if(amount < 0) then
-	-- error
+		self:rejectAction(actor, "You cannot withdraw a negative amount.")
+		return
+	end
+	if(amount > self.balance) then
+		self:rejectAction(actor, string.filter("Not enough funds. You cannot withdraw more than %s from this account.", formatAmount(amount)))		
+		return
 	end
 
 	self.balance = self.balance - amount
 	self:save()
 end
 
-function BankAccount:transferTo(other, amount)
+function BankAccount:transferTo(actor, other, amount)
 	amount = math.ceil(amount)
 	if(amount < 0) then
-	-- error
-	end	
+		self:rejectAction(actor, "You cannot transfer a negative amount.")
+		return
+	end
 	if(amount > self.balance) then
-	-- error
+		self:rejectAction(actor, string.filter("Not enough funds. You cannot transfer more than %s from this account.", formatAmount(amount)))		
+		return
 	end
 	
 	minetest.debug(string.format("Bank: transfering %s from %s to %s.", formatAmount(amount), self.owner, other.owner))
