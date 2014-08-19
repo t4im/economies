@@ -1,3 +1,4 @@
+-- use economy.conf in your worldpath to change any settings listed as defaults below
 economy.config = economy.config or Settings(minetest.get_worldpath().."/economy.conf")
 
 local conf_table = economy.config:to_table()
