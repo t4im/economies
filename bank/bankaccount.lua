@@ -48,7 +48,7 @@ function BankAccount:set(actor, amount)
 	self:save()
 end
 
-function BankAccount:get()
+function BankAccount:getBalance()
 	return self.balance or 0
 end
 
