@@ -19,7 +19,7 @@ local pay = function(from, to, amount)
 	-- * transfers to alternative accounts without getting noticed
 	local targetPlayer = minetest.get_player_by_name(to)
 	if (not targetPlayer) then
-		minetest.chat_send_player(from, targetPlayer .. " is currently offline.")
+		minetest.chat_send_player(from, to .. " is currently offline.")
 		return false
 	end
 
