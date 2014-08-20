@@ -62,6 +62,12 @@ minetest.register_chatcommand("bank_admin", {
 })
 
 local pay = function(from, to, amount)
+	-- lets ignore these already here to prevent a player from accidentally freezing his own account (see below)
+	if(from == to or amount == 0) then
+		minetest.chat_send_player(from, "Successfully done nothing.")
+		return false
+	end
+
 	-- check if source is frozen
 	local sourceAccount = economy.bank.getAccount(from)
 	if (sourceAccount:isFrozen()) then
