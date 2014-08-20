@@ -5,6 +5,16 @@ minetest.register_privilege("money_admin", {
 	give_to_singleplayer = false,
 })
 
+local alertAdmins = function(message)
+	for _,player in ipairs(minetest.get_connected_players()) do
+		local name = player:get_player_name()
+		local privs = minetest.get_player_privs(name)
+		if privs.ban or privs.money_admin then
+			minetest.chat_send_player(name, string.format("[Bank] <ALERT> %s", message))
+		end
+	end
+end
+
 local bank_admin_params = "[show/freeze/unfreeze <account> | deposit/withdraw/set <account> <amount> | transfer <source> <target> <amount>]"
 minetest.register_chatcommand("bank_admin", {
 	description = "Modify accounts",
@@ -73,6 +83,20 @@ local pay = function(from, to, amount)
 	local targetAccount = economy.bank.getAccount(to)
 	if (targetAccount:isFrozen()) then
 		minetest.chat_send_player(from, "The target account is currently frozen.")
+		return false
+	end
+
+	-- if both players are from the same ip it might be a possible cheating attempt
+	-- since we only accept transfers to online players, this is bound to be noticed
+	if minetest.get_player_ip(from) == minetest.get_player_ip(to) then
+		alertAdmins(string.format(
+			"%s tried to transfer %s to %s. Both clients are connected from the same IP address.",
+			from, economy.formatMoney(amount), to
+		))
+		minetest.chat_send_player(from,
+			"You tried to transfer money to an account that originates from the same network as you.\n" ..
+			"To prevent potential abuse the transfer was denied and admins were notified."
+		)
 		return false
 	end
 
