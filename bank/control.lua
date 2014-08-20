@@ -76,11 +76,7 @@ local pay = function(from, to, amount)
 		return false
 	end
 
-	local result, feedback = sourceAccount:transferTo(targetAccount, amount)
-	if feedback then
-		minetest.chat_send_player(from, feedback)
-	end
-	return result
+	return economy.feedbackTo(name, sourceAccount:transferTo(targetAccount, amount))
 end
 
 -- since several other economic mods use this command in this form, we want to support it for the users as well
