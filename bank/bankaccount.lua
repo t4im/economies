@@ -46,6 +46,8 @@ function BankAccount:rejectAction(actor, message)
 end
 
 function BankAccount:set(actor, amount)
+	if(amount == 0) then return end
+
 	-- make sure no one tries to set Pi amount of credits, or similar annoyances
 	amount = math.ceil(amount)
 
@@ -59,6 +61,8 @@ function BankAccount:set(actor, amount)
 end
 
 function BankAccount:deposit(actor, amount)
+	if(amount == 0) then return end
+
 	amount = math.ceil(amount)
 	if(amount < 0) then
 		self:rejectAction(actor, "You cannot deposit a negative amount.")
@@ -70,6 +74,8 @@ function BankAccount:deposit(actor, amount)
 end
 
 function BankAccount:withdraw(actor, amount)
+	if(amount == 0) then return end
+
 	amount = math.ceil(amount)
 	if(amount < 0) then
 		self:rejectAction(actor, "You cannot withdraw a negative amount.")
@@ -85,8 +91,8 @@ function BankAccount:withdraw(actor, amount)
 end
 
 function BankAccount:transferTo(actor, other, amount)
-	-- transfering to oneself is always a neutral action
-	if(self:name() == other:name()) then return end
+	-- transferring to oneself is always a neutral action, as is transferring nothing
+	if(self:name() == other:name() or amount == 0) then return end
 
 	amount = math.ceil(amount)
 	if(amount < 0) then
