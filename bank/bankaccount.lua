@@ -31,7 +31,7 @@ function BankAccount:rejectAction(actor, message)
 		if(actor) then
 			minetest.chat_send_player(actor, message)
 		else
-			minetest.log("error", string.filter("[Bank] (%s, %s) %s", message))
+			minetest.log("error", string.format("[Bank] (%s, %s) %s", self.owner, economy.formatMoney(self.balance), message))
 		end
 end
 
@@ -70,7 +70,7 @@ function BankAccount:withdraw(actor, amount)
 		return
 	end
 	if(amount > self.balance) then
-		self:rejectAction(actor, string.filter("Not enough funds. You cannot withdraw more than %s from this account.", economy.formatMoney(amount)))		
+		self:rejectAction(actor, string.format("Not enough funds. You cannot withdraw more than %s from this account.", economy.formatMoney(self.balance)))		
 		return
 	end
 
@@ -85,11 +85,11 @@ function BankAccount:transferTo(actor, other, amount)
 		return
 	end
 	if(amount > self.balance) then
-		self:rejectAction(actor, string.filter("Not enough funds. You cannot transfer more than %s from this account.", economy.formatMoney(amount)))		
+		self:rejectAction(actor, string.format("Not enough funds. You cannot transfer more than %s from this account.", economy.formatMoney(self.balance)))		
 		return
 	end
 	
-	minetest.debug(string.format("Bank: transfering %s from %s to %s.", economy.formatMoney(amount), self.owner, other.owner))
+	minetest.debug(string.format("Bank: transferring %s from %s to %s.", economy.formatMoney(amount), self.owner, other.owner))
 	self.balance = self.balance - amount
 	other.balance = other.balance + amount
 	self:save()
