@@ -85,6 +85,9 @@ function BankAccount:withdraw(actor, amount)
 end
 
 function BankAccount:transferTo(actor, other, amount)
+	-- transfering to oneself is always a neutral action
+	if(self:name() == other:name()) then return end
+
 	amount = math.ceil(amount)
 	if(amount < 0) then
 		self:rejectAction(actor, "You cannot transfer a negative amount.")
