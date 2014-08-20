@@ -25,8 +25,9 @@ minetest.register_chatcommand("bank_admin", {
 
 			local transferAmount = tonumber(args[4])
 			if (command == "transfer" and args[3] and transferAmount) then
-				account:transfer(actor, args[3], transferAmount)
-				return true
+				local result, feedback = account:transfer(actor, args[3], transferAmount)
+				if feedback then minetest.chat_send_player(name, feedback) end
+				return result
 			end
 
 			local amount = tonumber(args[3])
@@ -35,20 +36,25 @@ minetest.register_chatcommand("bank_admin", {
 				minetest.chat_send_player(name, account:describe())
 				return true
 			elseif (command == "freeze") then
-				account:freeze()
-				return true
+				local result, feedback = account:freeze()
+				if feedback then minetest.chat_send_player(name, feedback) end
+				return result
 			elseif (command == "unfreeze") then
-				account:unfreeze()
-				return true
+				local result, feedback = account:unfreeze()
+				if feedback then minetest.chat_send_player(name, feedback) end
+				return result
 			elseif (command == "deposit" and amount) then
-				account:deposit(actor, amount)
-				return true
+				local result = account:deposit(amount)
+				if feedback then minetest.chat_send_player(name, feedback) end
+				return result, feedback
 			elseif (command == "withdraw" and amount) then
-				account:withdraw(actor, amount)
-				return true
+				local result, feedback = account:withdraw(amount)
+				if feedback then minetest.chat_send_player(name, feedback) end
+				return result
 			elseif (command == "set" and amount) then
-				account:set(actor, amount)
-				return true
+				local result, feedback = account:set(amount)
+				if feedback then minetest.chat_send_player(name, feedback) end
+				return result
 			end
 		end
 
@@ -82,7 +88,11 @@ local pay = function(from, to, amount)
 		return false
 	end
 
-	sourceAccount:transferTo(from, targetAccount, amount)
+	local result, feedback = sourceAccount:transferTo(targetAccount, amount)
+	if feedback then
+		minetest.chat_send_player(from, feedback)
+	end
+	return result
 end
 
 -- since several other economic mods use this command in this form, we want to support it for the users as well
@@ -110,7 +120,7 @@ minetest.register_chatcommand("money", {
 
 		-- /money pay <account> <amount>
 		if (command == "pay" and target and amount) then
-			pay(name, target, amount)
+			return pay(name, target, amount)
 		else
 			minetest.chat_send_player(name, "Invalid parameters (see /help money)")
 			return false

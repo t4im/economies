@@ -10,31 +10,22 @@ local accountFile = function(name)
 	return minetest.get_worldpath() .. economy.config:get("bank_path") .. "/" .. name .. ".txt"
 end
 
-local rejectAction = function(actor, message)
-		if(actor) then
-			minetest.chat_send_player(actor, message)
-		else
-			minetest.log("error", string.format("[Bank] %s", message))
-		end
-end
-
 -- processes a passed amount value
 -- returns the resulting amount or nil if unsuccessful
-local processAmount = function(actor, amount)
+local processAmount = function(amount)
 	-- first lets make sure we really have a number
 	amount = tonumber(amount)
-	if not amount return nil end
+	if not amount then return nil, "Not a number" end
 
 	-- make sure no one tries to set Pi amount of credits, or similar annoyances
 	amount = math.ceil(amount)
 
 	-- ignore any neutral operations
-	if(amount == 0) then return nil end
+	if(amount == 0) then return nil, "Successfully done nothing" end
 
 	-- we generally don't allow operations on negative values
 	if(amount < 0) then
-		rejectAction(actor, "You must not pass a negative amount.")
-		return nil
+		return nil, "You must not pass a negative amount."
 	end
 
 	return amount
@@ -67,51 +58,49 @@ function BankAccount:describe()
 	return string.format("Account '%s' with %s. Status: %s", self:name(), self:printBalance(), self:printStatus())
 end
 
-function BankAccount:rejectAction(actor, message)
-		if(actor) then
-			minetest.chat_send_player(actor, message)
-		else
-			minetest.log("error", string.format("[Bank] (%s, %s) %s", self.owner, self:printBalance(), message))
-		end
-end
-
-function BankAccount:assertSolvency(actor, amount)
+function BankAccount:assertSolvency(amount)
 	if(amount > self.balance) then
-		self:rejectAction(actor, string.format("Not enough funds. There is only %s available.", self:printBalance()))		
-		return false
+		return false, string.format("Not enough funds. There is only %s available.", self:printBalance())
 	end
 	return true
 end
 
-function BankAccount:set(actor, amount)
-	amount = processAmount(actor, amount) or return
+function BankAccount:set(amount)
+	local amount, feedback = processAmount(amount)
+	if not amount then return false, feedback end
 
 	self.balance = amount
-	self:save()
+	return self:save()
 end
 
-function BankAccount:deposit(actor, amount)
-	amount = processAmount(actor, amount) or return
+function BankAccount:deposit(amount)
+	local amount, feedback = processAmount(amount)
+	if not amount then return false, feedback end
 	
 	self.balance = self.balance + amount
-	self:save()
+	return self:save()
 end
 
-function BankAccount:withdraw(actor, amount)
-	amount = processAmount(actor, amount) or return
-	self:assertSolvency(actor, amount) or return
+function BankAccount:withdraw(amount)
+	local amount, feedback = processAmount(amount)
+	if not amount then return false, feedback end
+
+	local solvent, feedback = self:assertSolvency(amount)
+	if not solvent then return solvent, feedback end
 
 	self.balance = self.balance - amount
-	self:save()
+	return self:save()
 end
 
-function BankAccount:transferTo(actor, other, amount)
-	amount = processAmount(actor, amount) or return
+function BankAccount:transferTo(other, amount)
+	local amount, feedback = processAmount(amount)
+	if not amount then return false, feedback end
 
 	-- transferring to oneself is always a neutral action
 	if(self:name() == other:name()) then return end
 
-	self:assertSolvency(actor, amount) or return
+	local solvent, feedback = self:assertSolvency(amount)
+	if not solvent then return solvent, feedback end
 	
 	local amountString = economy.formatMoney(amount)
 
@@ -119,25 +108,25 @@ function BankAccount:transferTo(actor, other, amount)
 
 	self.balance = self.balance - amount
 	other.balance = other.balance + amount
-	self:save()
-	other:save()
 
 	minetest.chat_send_player(self.owner, string.format("You paid %s to %s", amountString, other.owner))
 	minetest.chat_send_player(other.owner, string.format("%s paid you %s", self.owner, amountString))
+
+	return self:save() and other:save()
 end
 
 function BankAccount:freeze()
 	minetest.debug("Bank: freezing account: " .. self:name())
 	self.frozen = true
-	self:save()
 	minetest.chat_send_player(self.owner, "Your bankaccount has been frozen.")
+	return self:save()
 end
 
 function BankAccount:unfreeze()
 	minetest.debug("Bank: unfreezing account: " .. self:name())
 	self.frozen = false
-	self:save()
 	minetest.chat_send_player(self.owner, "Your bankaccount has been unfrozen.")
+	return self:save()
 end
 
 function BankAccount:save()
@@ -151,6 +140,7 @@ function BankAccount:save()
 	
 	-- update cache
 	economy.bank.accounts[name] = self
+	return true
 end
 
 -- ==================
