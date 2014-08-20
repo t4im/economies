@@ -90,13 +90,15 @@ local pay = function(from, to, amount)
 	-- since we only accept transfers to online players, this is bound to be noticed
 	if minetest.get_player_ip(from) == minetest.get_player_ip(to) then
 		alertAdmins(string.format(
-			"%s tried to transfer %s to %s. Both clients are connected from the same IP address.",
+			"%s tried to transfer %s to %s. Both clients are connected from the same IP address. The Accounts were preventively frozen.",
 			from, economy.formatMoney(amount), to
 		))
 		minetest.chat_send_player(from,
 			"You tried to transfer money to an account that originates from the same network as you.\n" ..
 			"To prevent potential abuse the transfer was denied and admins were notified."
 		)
+		sourceAccount:freeze()
+		targetAccount:freeze()
 		return false
 	end
 
