@@ -89,11 +89,17 @@ function BankAccount:transferTo(actor, other, amount)
 		return
 	end
 	
+	local amountString = economy.formatMoney(amount)
+
 	minetest.debug(string.format("Bank: transferring %s from %s to %s.", economy.formatMoney(amount), self.owner, other.owner))
+
 	self.balance = self.balance - amount
 	other.balance = other.balance + amount
 	self:save()
 	other:save()
+
+	minetest.chat_send_player(self.owner, string.format("You paid %s to %s", amountString, other.owner))
+	minetest.chat_send_player(other.owner, string.format("%s paid you %s", self.owner, amountString))
 end
 
 function BankAccount:freeze()
