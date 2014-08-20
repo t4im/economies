@@ -37,7 +37,8 @@ end
  
 BankAccount = {
 	balance = 0,
-	frozen = false,
+	-- reason of freezing or nil if not frozen
+	frozen = nil,
 	owner = nil,
 }
 
@@ -51,23 +52,17 @@ end
 function BankAccount:name() return self.owner end
 function BankAccount:getBalance() return self.balance or 0 end
 function BankAccount:printBalance() return economy.formatMoney(self.balance) end
-function BankAccount:isFrozen() return self.frozen or false end
-function BankAccount:printStatus() return (self:isFrozen() and "frozen" or "active") end
+function BankAccount:isFrozen() return self.frozen end
+-- return false if frozen with reason or true with 'nil' as reason
+function BankAccount:assertActive()	return not self.frozen, self.frozen end
 
 function BankAccount:describe()
-	return string.format("Account '%s' with %s. Status: %s", self:name(), self:printBalance(), self:printStatus())
+	return string.format("[Bank] '%s' with %s. Frozen: %s", self:name(), self:printBalance(), self.frozen or "no")
 end
 
 function BankAccount:assertSolvency(amount)
 	if(amount > self.balance) then
 		return false, string.format("Not enough funds. There is only %s available.", self:printBalance())
-	end
-	return true
-end
-
-function BankAccount:assertActive()
-	if (self:isFrozen()) then
-		return false, "Account is frozen."
 	end
 	return true
 end
@@ -122,16 +117,16 @@ function BankAccount:transferTo(other, amount)
 	return self:save() and other:save()
 end
 
-function BankAccount:freeze()
-	minetest.debug("Bank: freezing account: " .. self:name())
-	self.frozen = true
-	minetest.chat_send_player(self.owner, "Your bankaccount has been frozen.")
+function BankAccount:freeze(reason)
+	minetest.debug(string.format("Bank: freezing account %s for %s", self:name(), reason))
+	self.frozen = reason
+	minetest.chat_send_player(self.owner, "Your bankaccount has been frozen: " .. reason)
 	return self:save()
 end
 
 function BankAccount:unfreeze()
 	minetest.debug("Bank: unfreezing account: " .. self:name())
-	self.frozen = false
+	self.frozen = nil
 	minetest.chat_send_player(self.owner, "Your bankaccount has been unfrozen.")
 	return self:save()
 end

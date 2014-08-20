@@ -15,7 +15,7 @@ local alertAdmins = function(message)
 	end
 end
 
-local bank_admin_params = "[show/freeze/unfreeze <account> | deposit/withdraw/set <account> <amount> | transfer <source> <target> <amount>]"
+local bank_admin_params = "[show/unfreeze <account> | freeze <account> <reason> | deposit/withdraw/set <account> <amount> | transfer <source> <target> <amount>]"
 minetest.register_chatcommand("bank_admin", {
 	description = "Modify accounts",
 	params = bank_admin_params,
@@ -36,6 +36,10 @@ minetest.register_chatcommand("bank_admin", {
 			local transferAmount = tonumber(args[4])
 			if (command == "transfer" and args[3] and transferAmount) then
 				return economy.feedbackTo(name, account:transfer(actor, args[3], transferAmount))
+			elseif (command == "freeze" and args[3]) then
+				-- args[3] is just the first word though enough for the test
+				local reason = string.match(param, "freeze [^ ]+ (.+)")
+				return economy.feedbackTo(name, account:freeze(reason))
 			end
 
 			local amount = tonumber(args[3])
@@ -43,10 +47,8 @@ minetest.register_chatcommand("bank_admin", {
 			if (command == "show") then
 				minetest.chat_send_player(name, account:describe())
 				return true
-			elseif (command == "freeze") then
-				return economy.feedbackTo(name, account:freeze(amount))
 			elseif (command == "unfreeze") then
-				return economy.feedbackTo(name, account:unfreeze(amount))
+				return economy.feedbackTo(name, account:unfreeze())
 			elseif (command == "deposit" and amount) then
 				return economy.feedbackTo(name, account:deposit(amount))
 			elseif (command == "withdraw" and amount) then
@@ -103,8 +105,8 @@ local pay = function(from, to, amount)
 			"You tried to transfer money to an account that originates from the same network as you.\n" ..
 			"To prevent potential abuse the transfer was denied and admins were notified."
 		)
-		sourceAccount:freeze()
-		targetAccount:freeze()
+		sourceAccount:freeze(string.format("attempt to transfer %s to %s, having the same ip address", economy.formatMoney(amount), to))
+		targetAccount:freeze(string.format("target of an attempt to transfer %s from %s, having the same ip address", economy.formatMoney(amount), from))
 		return false
 	end
 
