@@ -166,11 +166,11 @@ function economy.bank.loadAccount(name)
 
 	local input = io.open(path, "r")
 	if(not input) then return nil end
-	
+
 	minetest.debug(string.format("Bank: loading account %s from %s", name, path))
 	local account = minetest.deserialize(input:read("*all"))
 	io.close(input)
-	
+
 	-- wrap it into a class
 	account = BankAccount:new(account)
 	
@@ -178,9 +178,24 @@ function economy.bank.loadAccount(name)
 	return account
 end
 
+-- imports simple "number in file" accounts from other mods
+function economy.bank.importAccount(name)
+	local import_path = economy.config:get("import_path")
+	if not import_path then return false end
+
+	local input = io.open(minetest.get_worldpath() .. import_path:format(name) , "r")
+	if not input then return false end
+	local balance = input:read("*n")
+	io.close(output)
+
+	minetest.debug(string.format("Bank: importing account %s with %s", name, economy.formatMoney(balance)))
+	return BankAccount:new{owner=name, balance=balance}
+end
+
 function economy.bank.getAccount(name)
 	local account = economy.bank.accounts[name]
 						or economy.bank.loadAccount(name)
+						or economy.bank.importAccount(name)
 						or economy.bank.createAccount(name)
 						
 	-- cache the account in memory to avoid having to read it consecutively

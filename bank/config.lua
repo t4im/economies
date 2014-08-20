@@ -7,7 +7,9 @@ local defaults = {
 	initial_amount = "0",
 	currency_format = "%dcr",
 	currency_name = "credit",
-	bank_path = "/bank"
+	bank_path = "/bank",
+	-- if set, load balance directly out of the file found via this configuration. Use %s for the playername
+	import_path = nil
 }
 
 for k, v in pairs(defaults) do
