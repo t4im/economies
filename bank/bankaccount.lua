@@ -65,6 +65,13 @@ function BankAccount:assertSolvency(amount)
 	return true
 end
 
+function BankAccount:assertActive()
+	if (self:isFrozen()) then
+		return false, "Account is frozen."
+	end
+	return true
+end
+
 function BankAccount:set(amount)
 	local amount, feedback = processAmount(amount)
 	if not amount then return false, feedback end
