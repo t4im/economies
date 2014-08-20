@@ -44,7 +44,7 @@ minetest.register_chatcommand("money", {
 		-- /money
 		if param == "" then
 			local account = economy.bank.getAccount(name)
-			minetest.chat_send_player(name, economy.formatMoney(account:getBalance()))
+			minetest.chat_send_player(name, account:printBalance())
 
 			if (account:isFrozen()) then
 				minetest.chat_send_player(name, "Your account is currently frozen.")

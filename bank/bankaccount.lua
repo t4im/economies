@@ -31,7 +31,7 @@ function BankAccount:rejectAction(actor, message)
 		if(actor) then
 			minetest.chat_send_player(actor, message)
 		else
-			minetest.log("error", string.format("[Bank] (%s, %s) %s", self.owner, economy.formatMoney(self.balance), message))
+			minetest.log("error", string.format("[Bank] (%s, %s) %s", self.owner, self:printBalance(), message))
 		end
 end
 
@@ -52,6 +52,10 @@ function BankAccount:getBalance()
 	return self.balance or 0
 end
 
+function BankAccount:printBalance()
+	return economy.formatMoney(self.balance)
+end
+
 function BankAccount:deposit(actor, amount)
 	amount = math.ceil(amount)
 	if(amount < 0) then
@@ -70,7 +74,7 @@ function BankAccount:withdraw(actor, amount)
 		return
 	end
 	if(amount > self.balance) then
-		self:rejectAction(actor, string.format("Not enough funds. You cannot withdraw more than %s from this account.", economy.formatMoney(self.balance)))		
+		self:rejectAction(actor, string.format("Not enough funds. You cannot withdraw more than %s from this account.", self:printBalance()))		
 		return
 	end
 
@@ -120,12 +124,16 @@ function BankAccount:isFrozen()
 	return self.frozen or false
 end
 
+function BankAccount:printStatus()
+	return (self:isFrozen() and "frozen" or "active")
+end
+
 function BankAccount:name()
 	return self.owner
 end
 
 function BankAccount:describe()
-	return string.format("Account '%s' with %s. Status: %s", self:name(), economy.formatMoney(self.balance), self:isFrozen() and "frozen" or "active")
+	return string.format("Account '%s' with %s. Status: %s", self:name(), self:printBalance(), self:printStatus())
 end
 
 function BankAccount:save()
