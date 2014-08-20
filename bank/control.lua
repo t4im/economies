@@ -5,6 +5,58 @@ minetest.register_privilege("money_admin", {
 	give_to_singleplayer = false,
 })
 
+local bank_admin_params = "[show/freeze/unfreeze <account> | deposit/withdraw/set <account> <amount> | transfer <source> <target> <amount>]"
+minetest.register_chatcommand("bank_admin", {
+	description = "Modify accounts",
+	params = bank_admin_params,
+	privs = {money_admin=true},
+	func = function(name,  param)
+		if param == "" then
+			minetest.chat_send_player(name, "Usage: " .. bank_admin_params)
+			return false
+		end
+
+		-- parse the parameters
+		local args = string.split(param, " ")
+        local command, accountName = args[1], args[2]
+
+		if accountName then
+			local account = economy.bank.getAccount(accountName)
+
+			local transferAmount = tonumber(args[4])
+			if (command == "transfer" and args[3] and transferAmount) then
+				account:transfer(actor, args[3], transferAmount)
+				return true
+			end
+
+			local amount = tonumber(args[3])
+
+			if (command == "show") then
+				minetest.chat_send_player(name, account:describe())
+				return true
+			elseif (command == "freeze") then
+				account:freeze()
+				return true
+			elseif (command == "unfreeze") then
+				account:unfreeze()
+				return true
+			elseif (command == "deposit" and amount) then
+				account:deposit(actor, amount)
+				return true
+			elseif (command == "withdraw" and amount) then
+				account:withdraw(actor, amount)
+				return true
+			elseif (command == "set" and amount) then
+				account:set(actor, amount)
+				return true
+			end
+		end
+
+		minetest.chat_send_player(name, "Usage: " .. bank_admin_params)
+		return false
+	end,
+})
+
 local pay = function(from, to, amount)
 	-- check if source is frozen
 	local sourceAccount = economy.bank.getAccount(from)
