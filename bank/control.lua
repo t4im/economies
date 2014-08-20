@@ -25,9 +25,7 @@ minetest.register_chatcommand("bank_admin", {
 
 			local transferAmount = tonumber(args[4])
 			if (command == "transfer" and args[3] and transferAmount) then
-				local result, feedback = account:transfer(actor, args[3], transferAmount)
-				if feedback then minetest.chat_send_player(name, feedback) end
-				return result
+				return economy.feedbackTo(name, account:transfer(actor, args[3], transferAmount))
 			end
 
 			local amount = tonumber(args[3])
@@ -36,25 +34,15 @@ minetest.register_chatcommand("bank_admin", {
 				minetest.chat_send_player(name, account:describe())
 				return true
 			elseif (command == "freeze") then
-				local result, feedback = account:freeze()
-				if feedback then minetest.chat_send_player(name, feedback) end
-				return result
+				return economy.feedbackTo(name, account:freeze(amount))
 			elseif (command == "unfreeze") then
-				local result, feedback = account:unfreeze()
-				if feedback then minetest.chat_send_player(name, feedback) end
-				return result
+				return economy.feedbackTo(name, account:unfreeze(amount))
 			elseif (command == "deposit" and amount) then
-				local result = account:deposit(amount)
-				if feedback then minetest.chat_send_player(name, feedback) end
-				return result, feedback
+				return economy.feedbackTo(name, account:deposit(amount))
 			elseif (command == "withdraw" and amount) then
-				local result, feedback = account:withdraw(amount)
-				if feedback then minetest.chat_send_player(name, feedback) end
-				return result
+				return economy.feedbackTo(name, account:withdraw(amount))
 			elseif (command == "set" and amount) then
-				local result, feedback = account:set(amount)
-				if feedback then minetest.chat_send_player(name, feedback) end
-				return result
+				return economy.feedbackTo(name, account:set(amount))
 			end
 		end
 
