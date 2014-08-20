@@ -10,6 +10,36 @@ local accountFile = function(name)
 	return minetest.get_worldpath() .. economy.config:get("bank_path") .. "/" .. name .. ".txt"
 end
 
+local rejectAction = function(actor, message)
+		if(actor) then
+			minetest.chat_send_player(actor, message)
+		else
+			minetest.log("error", string.format("[Bank] %s", message))
+		end
+end
+
+-- processes a passed amount value
+-- returns the resulting amount or nil if unsuccessful
+local processAmount = function(actor, amount)
+	-- first lets make sure we really have a number
+	amount = tonumber(amount)
+	if not amount return nil end
+
+	-- make sure no one tries to set Pi amount of credits, or similar annoyances
+	amount = math.ceil(amount)
+
+	-- ignore any neutral operations
+	if(amount == 0) then return nil end
+
+	-- we generally don't allow operations on negative values
+	if(amount < 0) then
+		rejectAction(actor, "You must not pass a negative amount.")
+		return nil
+	end
+
+	return amount
+end
+
 -- =============
 -- Account class
 -- =============
@@ -45,64 +75,43 @@ function BankAccount:rejectAction(actor, message)
 		end
 end
 
-function BankAccount:set(actor, amount)
-	if(amount == 0) then return end
-
-	-- make sure no one tries to set Pi amount of credits, or similar annoyances
-	amount = math.ceil(amount)
-
-	if(amount < 0) then
-		self:rejectAction(actor, "You cannot set a negative balance.")
-		return
+function BankAccount:assertSolvency(actor, amount)
+	if(amount > self.balance) then
+		self:rejectAction(actor, string.format("Not enough funds. There is only %s available.", self:printBalance()))		
+		return false
 	end
+	return true
+end
+
+function BankAccount:set(actor, amount)
+	amount = processAmount(actor, amount) or return
 
 	self.balance = amount
 	self:save()
 end
 
 function BankAccount:deposit(actor, amount)
-	if(amount == 0) then return end
-
-	amount = math.ceil(amount)
-	if(amount < 0) then
-		self:rejectAction(actor, "You cannot deposit a negative amount.")
-		return
-	end
+	amount = processAmount(actor, amount) or return
 	
 	self.balance = self.balance + amount
 	self:save()
 end
 
 function BankAccount:withdraw(actor, amount)
-	if(amount == 0) then return end
-
-	amount = math.ceil(amount)
-	if(amount < 0) then
-		self:rejectAction(actor, "You cannot withdraw a negative amount.")
-		return
-	end
-	if(amount > self.balance) then
-		self:rejectAction(actor, string.format("Not enough funds. You cannot withdraw more than %s from this account.", self:printBalance()))		
-		return
-	end
+	amount = processAmount(actor, amount) or return
+	self:assertSolvency(actor, amount) or return
 
 	self.balance = self.balance - amount
 	self:save()
 end
 
 function BankAccount:transferTo(actor, other, amount)
-	-- transferring to oneself is always a neutral action, as is transferring nothing
-	if(self:name() == other:name() or amount == 0) then return end
+	amount = processAmount(actor, amount) or return
 
-	amount = math.ceil(amount)
-	if(amount < 0) then
-		self:rejectAction(actor, "You cannot transfer a negative amount.")
-		return
-	end
-	if(amount > self.balance) then
-		self:rejectAction(actor, string.format("Not enough funds. You cannot transfer more than %s from this account.", economy.formatMoney(self.balance)))		
-		return
-	end
+	-- transferring to oneself is always a neutral action
+	if(self:name() == other:name()) then return end
+
+	self:assertSolvency(actor, amount) or return
 	
 	local amountString = economy.formatMoney(amount)
 
