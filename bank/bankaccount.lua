@@ -27,6 +27,16 @@ function BankAccount:new(object)
 	return object
 end
 
+function BankAccount:name() return self.owner end
+function BankAccount:getBalance() return self.balance or 0 end
+function BankAccount:printBalance() return economy.formatMoney(self.balance) end
+function BankAccount:isFrozen() return self.frozen or false end
+function BankAccount:printStatus() return (self:isFrozen() and "frozen" or "active") end
+
+function BankAccount:describe()
+	return string.format("Account '%s' with %s. Status: %s", self:name(), self:printBalance(), self:printStatus())
+end
+
 function BankAccount:rejectAction(actor, message)
 		if(actor) then
 			minetest.chat_send_player(actor, message)
@@ -46,14 +56,6 @@ function BankAccount:set(actor, amount)
 
 	self.balance = amount
 	self:save()
-end
-
-function BankAccount:getBalance()
-	return self.balance or 0
-end
-
-function BankAccount:printBalance()
-	return economy.formatMoney(self.balance)
 end
 
 function BankAccount:deposit(actor, amount)
@@ -118,22 +120,6 @@ function BankAccount:unfreeze()
 	self.frozen = false
 	self:save()
 	minetest.chat_send_player(self.owner, "Your bankaccount has been unfrozen.")
-end
-
-function BankAccount:isFrozen()
-	return self.frozen or false
-end
-
-function BankAccount:printStatus()
-	return (self:isFrozen() and "frozen" or "active")
-end
-
-function BankAccount:name()
-	return self.owner
-end
-
-function BankAccount:describe()
-	return string.format("Account '%s' with %s. Status: %s", self:name(), self:printBalance(), self:printStatus())
 end
 
 function BankAccount:save()
