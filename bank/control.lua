@@ -106,6 +106,7 @@ minetest.register_chatcommand("money", {
 
 		-- parse the parameters
 		local command, target, amount = string.match(param, "([^ ]+) ([^ ]+) (.+)")
+		amount = tonumber(amount)
 
 		-- /money pay <account> <amount>
 		if (command == "pay" and target and amount) then
