@@ -16,6 +16,31 @@ local atm_model_top = {
 	}
 }
 
+minetest.register_on_player_receive_fields(function(player, formname, fields)
+	if formname ~= "bank:wire_formspec" then return end
+
+	if fields.transfer then
+		economy.bank.wire(player:get_player_name(), fields.to, fields.amount)
+	end
+end)
+
+local open_atm_wire_formspec = function(player)
+	local playername = player:get_player_name()
+	local account = economy.bank.getAccount(playername)
+	local formspec = "size[10,7]"..
+		"label[0.75,0.75; Welcome " .. account.owner .. "]" ..
+		"label[5,0.75;" ..
+			"Balance: " .. account:printBalance() .. "\n" ..
+			"Frozen: " .. (account:isFrozen() or "no") .. "]" ..
+		"label[0.75,2.5;Wire transfer]" ..
+		"field[1,4;8.25,0.75;subject;Subject (optional):;]" ..
+		"field[1,5;4,0.75;to;To:;]" ..
+		"field[5,5;2,0.75;amount;Amount:;0]" ..
+		"button[7,4.75;2,0.75;transfer;Transfer]"..
+		"button_exit[8,6;1.5,0.75;logout;Logout]"
+	minetest.show_formspec(playername, "bank:wire_formspec", formspec)
+end
+
 minetest.register_node("bank:atm_bottom", {
 	tiles = {
 		"default_steel_block.png",
@@ -41,23 +66,7 @@ minetest.register_node("bank:atm_bottom", {
 		meta:set_string("infotext", "ATM")
 	end,
 	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
-		local meta = minetest.get_meta(pos)
-		local playername = clicker:get_player_name()
-		local account = economy.bank.getAccount(playername)
-		minetest.show_formspec(playername, "atm_info",
-			"size[10,7]"..
-			"label[0.75,0.75; Welcome " .. account.owner .. "]" ..
-			"label[5,0.75;" ..
-				"Balance: " .. account:printBalance() .. "\n" ..
-				"Frozen: " .. (account:isFrozen() or "no") .. "]" ..
-
-			"label[0.75,2.5;Wire transfer]" ..
-			"field[1,4;8.25,0.75;subject;Subject (optional):;]" ..
-			"field[1,5;4,0.75;to;To:;]" ..
-			"field[5,5;2,0.75;amount;Amount:;0]" ..
-			"button[7,4.75;2,0.75;transfer;Transfer]"..
-			"button_exit[8,6;1.5,0.75;logout;Logout]"
-		)
+		open_atm_wire_formspec(clicker)
 	end,
 	on_place = function(itemstack, placer, pointed_thing)
 		local pos = economy.basePos(pointed_thing)
