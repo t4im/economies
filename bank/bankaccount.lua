@@ -94,7 +94,8 @@ function BankAccount:withdraw(amount)
 	return self:save()
 end
 
-function BankAccount:transferTo(other, amount)
+-- subject is optional
+function BankAccount:transferTo(other, amount, subject)
 	local amount, feedback = processAmount(amount)
 	if not amount then return false, feedback end
 
@@ -106,13 +107,17 @@ function BankAccount:transferTo(other, amount)
 	
 	local amountString = economy.formatMoney(amount)
 
-	minetest.log("action", string.format("[Bank] transfer: %d (%s -> %s)", amount, self.owner, other.owner))
+	minetest.log("action", string.format("[Bank] transfer: %d (%s -> %s) %s", amount, self.owner, other.owner, subject or ""))
 
 	self.balance = self.balance - amount
 	other.balance = other.balance + amount
 
 	minetest.chat_send_player(self.owner, string.format("You paid %s to %s", amountString, other.owner))
 	minetest.chat_send_player(other.owner, string.format("%s paid you %s", self.owner, amountString))
+
+	if subject then
+		minetest.chat_send_player(other.owner, "Subject: " .. subject))
+	end
 
 	return self:save() and other:save()
 end
