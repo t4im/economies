@@ -5,6 +5,9 @@ minetest.register_privilege("money_admin", {
 	give_to_singleplayer = false,
 })
 
+economy = economy or {}
+economy.bank = economy.bank or {}
+
 local alertAdmins = function(message)
 	for _,player in ipairs(minetest.get_connected_players()) do
 		local name = player:get_player_name()
@@ -63,7 +66,7 @@ minetest.register_chatcommand("bank_admin", {
 	end,
 })
 
-local pay = function(from, to, amount)
+function economy.bank.wire(from, to, amount)
 	-- lets ignore these already here to prevent a player from accidentally freezing his own account (see below)
 	if(from == to or amount == 0) then
 		minetest.chat_send_player(from, "Successfully done nothing.")
@@ -138,7 +141,7 @@ minetest.register_chatcommand("money", {
 
 		-- /money pay <account> <amount>
 		if (command == "pay" and target and amount) then
-			return pay(name, target, amount)
+			return economy.bank.wire(name, target, amount)
 		else
 			minetest.chat_send_player(name, "Invalid parameters (see /help money)")
 			return false
