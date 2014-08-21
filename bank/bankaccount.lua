@@ -40,6 +40,7 @@ BankAccount = {
 	-- reason of freezing or nil if not frozen
 	frozen = nil,
 	owner = nil,
+	transient = nil,
 }
 
 function BankAccount:new(object)
@@ -141,7 +142,9 @@ function BankAccount:save()
 	local path = accountFile(name)
 	minetest.debug(string.format("[Bank] saving account %s to %s ", name, path))
 	
-	local output = io.open(path, "w")	
+	local output = io.open(path, "w")
+	-- remove transient flag direclty before serializing
+	self.transient = nil
 	output:write(minetest.serialize(self))
 	io.close(output)
 	
@@ -158,7 +161,7 @@ economy.bank.accounts = economy.bank.accounts or {}
 function economy.bank.createAccount(name)
 	local initialAmount = math.floor(economy.config:get("initial_amount"))
 	minetest.debug(string.format("[Bank] creating account %s with %s", name, economy.formatMoney(initialAmount)))
-	return BankAccount:new{owner=name, balance=initialAmount}
+	return BankAccount:new{owner=name, balance=initialAmount, transient=true}
 end
 
 function economy.bank.loadAccount(name)
@@ -188,7 +191,7 @@ function economy.bank.importAccount(name)
 	io.close(output)
 
 	minetest.log("info", string.format("[Bank] imported account %s with %s", name, economy.formatMoney(balance)))
-	return BankAccount:new{owner=name, balance=balance}
+	return BankAccount:new{owner=name, balance=balance, transient=true}
 end
 
 function economy.bank.getAccount(name)

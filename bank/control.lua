@@ -54,6 +54,9 @@ minetest.register_chatcommand("bankadmin", {
 
 			if (command == "show") then
 				minetest.chat_send_player(name, account:describe())
+				if account.transient then
+					minetest.chat_send_player(name, "account is transient")
+				end
 				return true
 			elseif (command == "unfreeze") then
 				return economy.feedbackTo(name, account:unfreeze())
