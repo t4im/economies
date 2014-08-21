@@ -116,7 +116,7 @@ function BankAccount:transferTo(other, amount, subject)
 	minetest.chat_send_player(other.owner, string.format("%s paid you %s", self.owner, amountString))
 
 	if subject then
-		minetest.chat_send_player(other.owner, "Subject: " .. subject))
+		minetest.chat_send_player(other.owner, "Subject: " .. subject)
 	end
 
 	return self:save() and other:save()
