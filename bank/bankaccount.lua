@@ -57,7 +57,7 @@ function BankAccount:isFrozen() return self.frozen end
 function BankAccount:assertActive()	return not self.frozen, self.frozen end
 
 function BankAccount:describe()
-	return string.format("[Bank] '%s' with %s. Frozen: %s", self:name(), self:printBalance(), self.frozen or "no")
+	return string.format("'%s' with %s. Frozen: %s", self:name(), self:printBalance(), self.frozen or "no")
 end
 
 function BankAccount:assertSolvency(amount)
@@ -106,7 +106,7 @@ function BankAccount:transferTo(other, amount)
 	
 	local amountString = economy.formatMoney(amount)
 
-	minetest.debug(string.format("Bank: transferring %s from %s to %s.", economy.formatMoney(amount), self.owner, other.owner))
+	minetest.log("action", string.format("[Bank] transfer: %d (%s -> %s)", amount, self.owner, other.owner))
 
 	self.balance = self.balance - amount
 	other.balance = other.balance + amount
@@ -118,14 +118,14 @@ function BankAccount:transferTo(other, amount)
 end
 
 function BankAccount:freeze(reason)
-	minetest.debug(string.format("Bank: freezing account %s for %s", self:name(), reason))
+	minetest.log("action", string.format("Bank: freezing account %s for %s", self:name(), reason))
 	self.frozen = reason
 	minetest.chat_send_player(self.owner, "Your bankaccount has been frozen: " .. reason)
 	return self:save()
 end
 
 function BankAccount:unfreeze()
-	minetest.debug("Bank: unfreezing account: " .. self:name())
+	minetest.log("action", "unfreezing account: " .. self:name())
 	self.frozen = nil
 	minetest.chat_send_player(self.owner, "Your bankaccount has been unfrozen.")
 	return self:save()
@@ -134,7 +134,7 @@ end
 function BankAccount:save()
 	local name = self:name()
 	local path = accountFile(name)
-	minetest.debug(string.format("Bank: saving account %s to %s ", name, path))
+	minetest.debug(string.format("[Bank] saving account %s to %s ", name, path))
 	
 	local output = io.open(path, "w")	
 	output:write(minetest.serialize(self))
@@ -152,7 +152,7 @@ economy.bank.accounts = economy.bank.accounts or {}
 
 function economy.bank.createAccount(name)
 	local initialAmount = math.floor(economy.config:get("initial_amount"))
-	minetest.debug(string.format("Bank: creating account %s with %s", name, economy.formatMoney(initialAmount)))
+	minetest.debug(string.format("[Bank] creating account %s with %s", name, economy.formatMoney(initialAmount)))
 	return BankAccount:new{owner=name, balance=initialAmount}
 end
 
@@ -162,14 +162,13 @@ function economy.bank.loadAccount(name)
 	local input = io.open(path, "r")
 	if(not input) then return nil end
 
-	minetest.debug(string.format("Bank: loading account %s from %s", name, path))
+	minetest.debug(string.format("[Bank] loading account %s from %s", name, path))
 	local account = minetest.deserialize(input:read("*all"))
 	io.close(input)
 
 	-- wrap it into a class
 	account = BankAccount:new(account)
-	
-	minetest.debug("Bank: " .. account:describe())	
+
 	return account
 end
 
@@ -183,7 +182,7 @@ function economy.bank.importAccount(name)
 	local balance = input:read("*n")
 	io.close(output)
 
-	minetest.debug(string.format("Bank: importing account %s with %s", name, economy.formatMoney(balance)))
+	minetest.log("info", string.format("[Bank] imported account %s with %s", name, economy.formatMoney(balance)))
 	return BankAccount:new{owner=name, balance=balance}
 end
 
