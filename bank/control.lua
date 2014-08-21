@@ -19,7 +19,7 @@ local alertAdmins = function(message)
 end
 
 local bank_admin_params = "[show/unfreeze <account> | freeze <account> <reason> | deposit/withdraw/set <account> <amount> | transfer <source> <target> <amount>]"
-minetest.register_chatcommand("bank_admin", {
+minetest.register_chatcommand("bankadmin", {
 	description = "Modify accounts",
 	params = bank_admin_params,
 	privs = {money_admin=true},
