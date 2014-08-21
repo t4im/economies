@@ -68,7 +68,7 @@ minetest.register_chatcommand("bank_admin", {
 
 function economy.bank.wire(from, to, amount)
 	-- lets ignore these already here to prevent a player from accidentally freezing his own account (see below)
-	if(from == to or amount == 0) then
+	if(from == to or amount == 0 or not to or to == "") then
 		minetest.chat_send_player(from, "Successfully done nothing.")
 		return false
 	end
