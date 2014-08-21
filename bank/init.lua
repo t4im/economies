@@ -16,3 +16,5 @@ dofile(economy.bank.modpath.."/common.lua")
 dofile(economy.bank.modpath.."/bankaccount.lua")
 -- load chatcommands, privileges and administration
 dofile(economy.bank.modpath.."/control.lua")
+-- extra nodes
+dofile(economy.bank.modpath.."/atm.lua")
