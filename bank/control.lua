@@ -18,7 +18,7 @@ local alertAdmins = function(message)
 	end
 end
 
-local bank_admin_params = "[show/unfreeze <account> | freeze <account> <reason> | deposit/withdraw/set <account> <amount> | transfer <source> <target> <amount>]"
+local bank_admin_params = "show/unfreeze <account> | freeze <account> <reason> | deposit/withdraw/set <account> <amount> | transfer <source> <target> <amount> [<subject>]"
 minetest.register_chatcommand("bankadmin", {
 	description = "Modify accounts",
 	params = bank_admin_params,
@@ -36,9 +36,14 @@ minetest.register_chatcommand("bankadmin", {
 		if accountName then
 			local account = economy.bank.getAccount(accountName)
 
-			local transferAmount = tonumber(args[4])
-			if (command == "transfer" and args[3] and transferAmount) then
-				return economy.feedbackTo(name, account:transfer(actor, args[3], transferAmount))
+			if (command == "transfer") then
+				local target, transferAmount, subject = string.match(param, "transfer [^ ]+ ([^ ]+) ([0-9]+) (.*)")
+				if(transferAmount and target) then
+					local targetAccount = economy.bank.getAccount(target)
+					-- add the information, that this was an admin action and by whome
+					subject = name .. " enforced transfer. " .. (subject or "")
+					return economy.feedbackTo(name, account:transferTo(targetAccount, transferAmount, subject))
+				end
 			elseif (command == "freeze" and args[3]) then
 				-- args[3] is just the first word though enough for the test
 				local reason = string.match(param, "freeze [^ ]+ (.+)")
