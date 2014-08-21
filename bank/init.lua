@@ -14,7 +14,8 @@ dofile(economy.bank.modpath.."/common.lua")
 
 -- load accounting class and methods
 dofile(economy.bank.modpath.."/bankaccount.lua")
--- load chatcommands, privileges and administration
+-- add bankaccount operations
+dofile(economy.bank.modpath.."/wiretransfer.lua")
 dofile(economy.bank.modpath.."/control.lua")
 -- extra nodes
 dofile(economy.bank.modpath.."/atm.lua")
