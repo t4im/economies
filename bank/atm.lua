@@ -16,24 +16,6 @@ local atm_model_top = {
 	}
 }
 
-local topOf = function(pos) return { x = pos.x, y=pos.y + 1, z = pos.z } end
-
-local basePos = function(pointed_thing)
-	local node = minetest.get_node(pointed_thing.under)
-	if minetest.registered_nodes[node.name]["buildable_to"] then
-		return pointed_thing.under
-	else
-		return pointed_thing.above
-	end
-end
-
-local buildableTo = function(pos, placer)
-	local node = minetest.get_node(pos)
-	local buildable = minetest.registered_nodes[node.name]["buildable_to"]
-	local protected = minetest.is_protected(pos, placer:get_player_name())
-	return buildable and not protected
-end
-
 minetest.register_node("bank:atm_bottom", {
 	tiles = {
 		"default_steel_block.png",
@@ -78,11 +60,11 @@ minetest.register_node("bank:atm_bottom", {
 		)
 	end,
 	on_place = function(itemstack, placer, pointed_thing)
-		local pos = basePos(pointed_thing)
+		local pos = economy.basePos(pointed_thing)
 		local facedir = minetest.dir_to_facedir(placer:get_look_dir())
-		local top_pos = { x = pos.x, y=pos.y + 1, z = pos.z }
+		local top_pos = economy.topPosOf(pos)
 
-		if buildableTo(pos, placer) and buildabelTo(top_pos, placer) then
+		if economy.buildableTo(pos, placer) and economy.buildableTo(top_pos, placer) then
 			local nodename = itemstack:get_name()
 			minetest.add_node(pos, { name = nodename, param2 = facedir })
 			minetest.add_node(top_pos, { name = "bank:atm_top", param2 = facedir })
@@ -91,7 +73,7 @@ minetest.register_node("bank:atm_bottom", {
 		end
 	end,
 	after_dig_node = function(pos, oldnode, oldmetadata, digger)
-		local top_pos = { x = pos.x, y=pos.y + 1, z = pos.z }
+		local top_pos = economy.topPosOf(pos)
 		if minetest.get_node(top_pos).name == "bank:atm_top" then
 			minetest.remove_node(top_pos)
 		end
