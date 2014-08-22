@@ -51,9 +51,7 @@ function BankAccount:new(object)
 end
 
 function BankAccount:name() return self.owner end
-function BankAccount:getBalance() return self.balance or 0 end
 function BankAccount:printBalance() return economy.formatMoney(self.balance) end
-function BankAccount:isFrozen() return self.frozen end
 -- return false if frozen with reason or true with 'nil' as reason
 function BankAccount:assertActive()	return not self.frozen, self.frozen end
 

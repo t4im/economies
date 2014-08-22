@@ -10,7 +10,7 @@ function economy.bank.wire(from, to, amount, subject)
 
 	-- check if source is frozen
 	local sourceAccount = economy.bank.getAccount(from)
-	if (sourceAccount:isFrozen()) then
+	if (sourceAccount.frozen) then
 		minetest.chat_send_player(from, "Your account is currently frozen.")
 		return false
 	end
@@ -27,7 +27,7 @@ function economy.bank.wire(from, to, amount, subject)
 
 	-- check if target is frozen
 	local targetAccount = economy.bank.getAccount(to)
-	if (targetAccount:isFrozen()) then
+	if (targetAccount.frozen) then
 		minetest.chat_send_player(from, "The target account is currently frozen.")
 		return false
 	end
@@ -66,7 +66,7 @@ function economy.bank.openWireFormspec(player)
 		"label[0.75,0.75; Welcome " .. account.owner .. "]" ..
 		"label[5,0.75;" ..
 			"Balance: " .. account:printBalance() .. "\n" ..
-			"Frozen: " .. (account:isFrozen() or "no") .. "]" ..
+			"Frozen: " .. (account.frozen or "no") .. "]" ..
 		"label[0.75,2.5;Wire transfer]" ..
 		"field[1,4;8.25,0.75;subject;Subject (optional):;]" ..
 		"field[1,5;4,0.75;to;To:;]" ..
