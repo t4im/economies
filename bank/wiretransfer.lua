@@ -35,7 +35,7 @@ function economy.bank.wire(from, to, amount, subject)
 	-- if both players are from the same ip it might be a possible cheating attempt
 	-- since we only accept transfers to online players, this is bound to be noticed
 	if minetest.get_player_ip(from) == minetest.get_player_ip(to) then
-		alertAdmins(string.format(
+		economy.bank.alertAdmins(string.format(
 			"%s tried to transfer %s to %s. Both clients are connected from the same IP address. The Accounts were preventively frozen.",
 			from, economy.formatMoney(amount), to
 		))

@@ -8,7 +8,7 @@ minetest.register_privilege("money_admin", {
 economy = economy or {}
 economy.bank = economy.bank or {}
 
-local alertAdmins = function(message)
+function economy.bank.alertAdmins(message)
 	for _,player in ipairs(minetest.get_connected_players()) do
 		local name = player:get_player_name()
 		local privs = minetest.get_player_privs(name)
