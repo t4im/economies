@@ -84,7 +84,7 @@ minetest.register_chatcommand("wire", {
 		amount = tonumber(amount)
 
 		if (account and amount and subject) then
-			return economy.bank.wire(name, target, amount, subject)
+			return economy.bank.wire(name, account, amount, subject)
 		end
 
 		minetest.chat_send_player(name, "Usage: <account> <amount> [<subject>])")
