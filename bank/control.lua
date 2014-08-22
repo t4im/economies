@@ -37,7 +37,7 @@ minetest.register_chatcommand("bankadmin", {
 			local account = economy.bank.getAccount(accountName)
 
 			if (command == "transfer") then
-				local target, transferAmount, subject = string.match(param, "transfer [^ ]+ ([^ ]+) ([0-9]+) (.*)")
+				local target, transferAmount, subject = string.match(param, "transfer [^ ]+ ([^ ]+) ([0-9]+) ?(.*)")
 				if(transferAmount and target) then
 					local targetAccount = economy.bank.getAccount(target)
 					-- add the information, that this was an admin action and by whome
@@ -80,7 +80,7 @@ minetest.register_chatcommand("wire", {
 	params = "<account> <amount> [<subject>]",
 	privs = {money=true},
 	func = function(name,  param)
-		local account, amount, subject = string.match(param, "([^ ]+) ([0-9]+) (.*)")
+		local account, amount, subject = string.match(param, "([^ ]+) ([0-9]+) ?(.*)")
 		amount = tonumber(amount)
 
 		if (account and amount and subject) then
