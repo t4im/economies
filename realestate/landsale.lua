@@ -8,6 +8,8 @@ economy.realestate.landsale = economy.realestate.landsale or {}
 
 function economy.realestate.landsale.receive_fields(pos, formname, fields, sender)
 	local name = sender:get_player_name()
+	if not fields.setup then return end
+
 	if minetest.is_protected(pos, name) then
 		minetest.chat_send_player(name, "You cannot configure a sale of land, that does not belong to you.")
 		return
@@ -15,7 +17,7 @@ function economy.realestate.landsale.receive_fields(pos, formname, fields, sende
 
 	local price = tonumber(fields.price)
 
-	if fields.setup and price then
+	if price then
 		local account = economy.bank.getAccount(name)
 		if account.frozen then
 			minetest.chat_send_player(name, "Your account is frozen. You may not sell any land at this time.")
