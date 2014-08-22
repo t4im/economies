@@ -9,5 +9,6 @@ economy.realestate.modpath = minetest.get_modpath("realestate")
 -- load configuraton
 dofile(economy.realestate.modpath.."/config.lua")
 
--- load signs
+-- anything related to selling land
+dofile(economy.realestate.modpath.."/landsale.lua")
 dofile(economy.realestate.modpath.."/forsale_signs.lua")

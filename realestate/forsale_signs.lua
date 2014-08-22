@@ -1,11 +1,12 @@
 -- uses some code, especially the nodeboxmodels and sign type determination, of
 -- the rewritten sign_lib by Vanessa Ezekowitz and Diego Martinez under lgpl
 
-local forsale_receive_fields = function(pos, formname, fields, sender)
-end
-
-local forsale_punch = function(pos, node, puncher)
-end
+-- call the functions that make the landselling happen
+-- not mixing these with the forsale signs allows us to
+-- add other nodes, for example aliased ones from protectionmods
+local forsale_receive_fields = economy.realestate.landsale.receive_fields
+local forsale_punch = economy.realestate.landsale.punch
+local forsale_construct = economy.realestate.landsale.construct
 
 local determine_sign_type = function(itemstack, placer, pointed_thing)
 	local name = minetest.get_node(pointed_thing.above).name
@@ -79,6 +80,7 @@ minetest.register_node("realestate:forsale_sign", {
 		"forsale_sign.png", "forsale_sign.png"},
 	groups = sign_groups,
 	on_place = determine_sign_type,
+	on_construct = forsale_construct,
 	on_receive_fields = forsale_receive_fields,
 	on_punch = forsale_punch
 })
@@ -105,6 +107,7 @@ minetest.register_node("realestate:forsale_sign_yard", {
 	groups = {choppy=2, dig_immediate=2},
 	drop = "realestate:forsale_sign",
 	on_receive_fields = forsale_receive_fields,
+	on_construct = forsale_construct,
 	on_punch = forsale_punch
 })
 
@@ -131,5 +134,6 @@ minetest.register_node("realestate:forsale_sign_hanging", {
 	groups = {choppy=2, dig_immediate=2},
 	drop = "realestate:forsale_sign",
 	on_receive_fields = forsale_receive_fields,
+	on_construct = forsale_construct,
 	on_punch = forsale_punch
 })
