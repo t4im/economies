@@ -10,27 +10,6 @@ local accountFile = function(name)
 	return minetest.get_worldpath() .. economy.config:get("bank_path") .. "/" .. name .. ".txt"
 end
 
--- processes a passed amount value
--- returns the resulting amount or nil if unsuccessful
-local processAmount = function(amount)
-	-- first lets make sure we really have a number
-	amount = tonumber(amount)
-	if not amount then return nil, "Not a number" end
-
-	-- make sure no one tries to set Pi amount of credits, or similar annoyances
-	amount = math.ceil(amount)
-
-	-- ignore any neutral operations
-	if(amount == 0) then return nil, "Successfully done nothing" end
-
-	-- we generally don't allow operations on negative values
-	if(amount < 0) then
-		return nil, "You must not pass a negative amount."
-	end
-
-	return amount
-end
-
 -- =============
 -- Account class
 -- =============
@@ -67,7 +46,7 @@ function BankAccount:assertSolvency(amount)
 end
 
 function BankAccount:set(amount)
-	local amount, feedback = processAmount(amount)
+	local amount, feedback = economy.sanitizeAmount(amount)
 	if not amount then return false, feedback end
 
 	self.balance = amount
@@ -75,7 +54,7 @@ function BankAccount:set(amount)
 end
 
 function BankAccount:deposit(amount)
-	local amount, feedback = processAmount(amount)
+	local amount, feedback = economy.sanitizeAmount(amount)
 	if not amount then return false, feedback end
 	
 	self.balance = self.balance + amount
@@ -83,7 +62,7 @@ function BankAccount:deposit(amount)
 end
 
 function BankAccount:withdraw(amount)
-	local amount, feedback = processAmount(amount)
+	local amount, feedback = economy.sanitizeAmount(amount)
 	if not amount then return false, feedback end
 
 	local solvent, feedback = self:assertSolvency(amount)
@@ -95,7 +74,7 @@ end
 
 -- subject is optional
 function BankAccount:transferTo(other, amount, subject)
-	local amount, feedback = processAmount(amount)
+	local amount, feedback = economy.sanitizeAmount(amount)
 	if not amount then return false, feedback end
 
 	-- transferring to oneself is always a neutral action
