@@ -15,21 +15,20 @@ function economy.realestate.landsale.receive_fields(pos, formname, fields, sende
 		return
 	end
 
-	local price = tonumber(fields.price)
+	local price = economy.feedbackTo(name, economy.sanitizeAmount(fields.price))
+	if not price then return end
 
-	if price then
-		local account = economy.bank.getAccount(name)
-		if account.frozen then
-			minetest.chat_send_player(name, "Your account is frozen. You may not sell any land at this time.")
-			return
-		end
-		local meta = minetest.get_meta(pos)
-		meta:set_string("infotext", string.format("For sale by %s for %d\n%s", name, price, fields.description or ""))
-		meta:set_string("seller", name)
-		meta:set_int("price", price)
-		meta:set_string("name", fields.name)
-		meta:set_string("description", fields.description)
+	local account = economy.bank.getAccount(name)
+	if account.frozen then
+		minetest.chat_send_player(name, "Your account is frozen. You may not sell any land at this time.")
+		return
 	end
+	local meta = minetest.get_meta(pos)
+	meta:set_string("infotext", string.format("For sale by %s for %d\n%s", name, price, fields.description or ""))
+	meta:set_string("seller", name)
+	meta:set_int("price", price)
+	meta:set_string("name", fields.name)
+	meta:set_string("description", fields.description)
 end
 
 function economy.realestate.landsale.punch(pos, node, puncher)
