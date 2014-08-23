@@ -12,6 +12,7 @@ Transaction = {
 	source = nil,
 	target = nil,
 	amount = nil,
+	type = nil,
 	initiator = nil
 }
 
@@ -40,7 +41,9 @@ function Transaction:initiator() return self.initiator or self.source end
 function Transaction:describe() return ("%s transfers %d (%s -> %s) %s"):format(self.initiator or "player", self.amount, self.source, self.target, self.subject or "-") end
 
 function Transaction:type()
-	if not self.initiator or self.initiator == self.source then
+	if type then
+		return type
+	elseif not self.initiator or self.initiator == self.source then
 		return "wire"
 	elseif self.initiator == self.target then
 		return "debit"
