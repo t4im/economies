@@ -1,7 +1,12 @@
--- these privileges seem to be consistent over most other economic mods, so lets reuse them as well
-minetest.register_privilege("money", "Can transfer money")
-minetest.register_privilege("money_admin", {
-	description = "Can modify account balance and freeze/unfreeze the account.",
+-- this privilege seem to be consistent over most other economic mods, so lets reuse them as well
+minetest.register_privilege("money", "Can interact with money (e.g. buy/sell things, wire transfer)")
+
+minetest.register_privilege("bank_teller", {
+	description = "Can handle basic administrative banking tasks like freeze/unfreeze accounts or peek into other accounts",
+	give_to_singleplayer = false,
+})
+minetest.register_privilege("bank_admin", {
+	description = "Can modify account balance.",
 	give_to_singleplayer = false,
 })
 
@@ -12,7 +17,7 @@ function economy.bank.alertAdmins(message)
 	for _,player in ipairs(minetest.get_connected_players()) do
 		local name = player:get_player_name()
 		local privs = minetest.get_player_privs(name)
-		if privs.ban or privs.money_admin then
+		if privs.ban or privs.bank_teller then
 			minetest.chat_send_player(name, string.format("[Bank] <ALERT> %s", message))
 		end
 	end
@@ -22,7 +27,7 @@ local bank_admin_params = "show/unfreeze <account> | freeze <account> <reason> |
 minetest.register_chatcommand("bankadmin", {
 	description = "Modify accounts",
 	params = bank_admin_params,
-	privs = {money_admin=true},
+	privs = {bank_teller=true},
 	func = function(name,  param)
 		if param == "" then
 			minetest.chat_send_player(name, "Usage: " .. bank_admin_params)
@@ -34,7 +39,8 @@ minetest.register_chatcommand("bankadmin", {
 		local command, accountName = args[1], args[2]
 
 		if accountName then
-			if (command == "transfer") then
+			local privs = minetest.get_player_privs(name)
+			if (command == "transfer" and privs.bank_admin) then
 				local target, transferAmount, subject = string.match(param, "transfer [^ ]+ ([^ ]+) ([0-9]+) ?(.*)")
 				if(transferAmount and target) then
 					-- add the information, that this was an admin action and by whome
@@ -64,11 +70,11 @@ minetest.register_chatcommand("bankadmin", {
 				return true
 			elseif (command == "unfreeze") then
 				return economy.feedbackTo(name, account:unfreeze())
-			elseif (command == "deposit" and amount) then
+			elseif (command == "deposit" and amount and privs.bank_admin) then
 				return economy.feedbackTo(name, account:deposit(amount))
-			elseif (command == "withdraw" and amount) then
+			elseif (command == "withdraw" and amount and privs.bank_admin) then
 				return economy.feedbackTo(name, account:withdraw(amount))
-			elseif (command == "set" and amount) then
+			elseif (command == "set" and amount and privs.bank_admin) then
 				return economy.feedbackTo(name, account:set(amount))
 			end
 		end

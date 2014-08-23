@@ -49,7 +49,7 @@ function Transaction:type()
 		return "debit"
 	else
 		local privs = minetest.get_player_privs(self.initiator)
-		if privs.money_admin then
+		if privs.bank_teller or privs.bank_admin then
 			return "admin"
 		end
 		assert(not privs.money, "it appears " .. self.initiator .. " has managed to get a hold on money admin functionality without having the necessary privs")
