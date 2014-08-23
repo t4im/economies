@@ -41,9 +41,12 @@ function economy.basePos(pointed_thing)
 	end
 end
 
-function economy.buildableTo(pos, placer)
-	local node = minetest.get_node(pos)
+function economy.buildableTo(pos, placer, reportViolation)
+	local node, player = minetest.get_node(pos), placer:get_player_name()
 	local buildable = minetest.registered_nodes[node.name]["buildable_to"]
-	local protected = minetest.is_protected(pos, placer:get_player_name())
+	local protected = minetest.is_protected(pos, player)
+	if protected and reportViolation then
+		minetest.record_protection_violation(pointed_thing.above, player)
+	end
 	return buildable and not protected
 end
