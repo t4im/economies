@@ -69,6 +69,8 @@ function Transaction:isValid()
 	local saneAmount, feedback = economy.sanitizeAmount(self.amount)
 	if not saneAmount then return false, feedback end
 
+	self.amount = saneAmount
+
 	local solvent, feedback = from:assertSolvency(self.amount)
 	if not solvent then return false, feedback end
 
