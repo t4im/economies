@@ -37,12 +37,7 @@ function Transaction:to() return economy.bank.getAccount(self.target) end
 -- if nil, the initiator is assumed to be the source
 function Transaction:initiator() return self.initiator or self.source end
 
-function Transaction:describe()
-	local initiator_prefix = ""
-	if self.initiator then initiator_prefix = self.initiator .. ": " end
-
-	return string.format("transfer %d (%s%s -> %s) %s", self.amount, initiator_prefix, self.source, self.target, self.subject or "-")
-end
+function Transaction:describe() return ("%s transfers %d (%s -> %s) %s"):format(self.initiator or "player", self.amount, self.source, self.target, self.subject or "-") end
 
 function Transaction:isPointless()
 	if	-- transferring from noone
