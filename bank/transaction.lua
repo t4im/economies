@@ -44,3 +44,58 @@ function Transaction:describe()
 	return string.format("transfer %d (%s%s -> %s) %s", amount, initiator_prefix, source, target, subject or "-")
 end
 
+function Transaction:isPointless()
+	if	-- transferring from noone
+		not self.source or self.source == ""
+		-- or transferring to noone
+		or not self.target or self.target == ""
+		-- or transferring to oneself
+		or (self.source == self.target)
+		-- or transferring nothing
+		or self.amount == 0
+	then -- it's indeed pretty pointless
+		return true, "Successfully done nothing."
+	end
+
+	--else
+	return false
+end
+
+function Transaction:isValid()
+	local from, to = self:from(), self:to()
+	if not from:exists() then return false, "source: neither account nor player exist" end
+	if not to:exists() then return false, "target: neither account nor player exist" end
+
+	local saneAmount, feedback = economy.sanitizeAmount(self.amount)
+	if not saneAmount then return false, feedback end
+
+	local solvent, feedback = from:assertSolvency(self.amount)
+	if not solvent then return false, feedback end
+
+	return true
+end
+
+function Transaction:isLegit()
+	local from, to = self:from(), self:to()
+
+	-- check if source is frozen
+	if (sourceAccount.frozen) then
+		return false, "The originating account is currently frozen."
+	-- check if target is frozen
+	elseif (targetAccount.frozen) then
+		return false, "The target account is currently frozen."
+	end
+
+	return true
+end
+
+function Transaction:check()
+	local pointless, feedback = self:isPointless()
+	if pointless then return false, feedback end
+
+	local valid, feedback = self:isValid()
+	if not valid then return false, feedback end
+
+	local legit, feedback = self:isLegit()
+	if not legit then return false, feedback end
+end
