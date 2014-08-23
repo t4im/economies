@@ -57,7 +57,7 @@ function economy.realestate.landsale.punch(pos, node, puncher)
 	local landname = meta:get_string("name")
 	local subject = string.format("Landsale at (%d,%d) %s", pos.x, pos.z, landname or "")
 
-	lcoal transaction = Transaction:new{source=name, target=seller, amount=transferAmount, subject=subject, location=pos}
+	local transaction = Transaction:new{source=name, target=seller, amount=transferAmount, subject=subject, location=pos}
 
 	-- if transfer successfull (especially after balance check)
 	if economy.feedbackTo(name, transaction:checkAndCommit()) then
