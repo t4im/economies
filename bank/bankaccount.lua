@@ -15,10 +15,11 @@ end
 -- =============
  
 BankAccount = {
+	name = nil, -- account id
+	owner = nil,  -- account holder/owner
 	balance = 0,
 	-- reason of freezing or nil if not frozen
 	frozen = nil,
-	owner = nil,
 	transient = nil,
 }
 
@@ -26,19 +27,22 @@ function BankAccount:new(object)
 	object = object or {}
 	setmetatable(object, self)
 	self.__index = self
-	self.__tostring = function (self) return self.owner end
+	self.__tostring = function (self) return self.name end
+	self.name = object.name or object.owner
 	return object
 end
 
-function BankAccount:name() return self.owner end
+-- at this time owner and name are identical, but this might be changed in the future
+function BankAccount:getOwner() return self.owner or name end
+
 function BankAccount:printBalance() return economy.formatMoney(self.balance) end
 -- return false if frozen with reason or true with 'nil' as reason
 function BankAccount:assertActive()	return not self.frozen, self.frozen end
 -- either account or playerfile with money privilege must exist
-function BankAccount:exists() return (not self.transient) or minetest.get_player_privs(self.owner).money end
+function BankAccount:exists() return (not self.transient) or minetest.get_player_privs(self:getOwner()).money end
 
 function BankAccount:describe()
-	return string.format("'%s' with %s. Frozen: %s", self:name(), self:printBalance(), self.frozen or "no")
+	return string.format("'%s' with %s. Frozen: %s", self.name, self:printBalance(), self.frozen or "no")
 end
 
 function BankAccount:assertSolvency(amount)
@@ -84,25 +88,24 @@ end
 function BankAccount:freeze(reason)
 	if not self:exists() then return false, "neither account nor player exist" end
 
-	minetest.log("action", string.format("Bank: freezing account %s for %s", self:name(), reason))
+	minetest.log("action", string.format("Bank: freezing account %s for %s", self.name, reason))
 	self.frozen = reason
-	minetest.chat_send_player(self.owner, "Your bankaccount has been frozen: " .. reason)
+	minetest.chat_send_player(self:getOwner(), "Your bankaccount has been frozen: " .. reason)
 	return self:save()
 end
 
 function BankAccount:unfreeze()
 	if not self:exists() then return false, "neither account nor player exist" end
 
-	minetest.log("action", "unfreezing account: " .. self:name())
+	minetest.log("action", "unfreezing account: " .. self.name)
 	self.frozen = nil
-	minetest.chat_send_player(self.owner, "Your bankaccount has been unfrozen.")
+	minetest.chat_send_player(self:getOwner(), "Your bankaccount has been unfrozen.")
 	return self:save()
 end
 
 function BankAccount:save()
-	local name = self:name()
-	local path = accountFile(name)
-	minetest.debug(string.format("[Bank] saving account %s to %s ", name, path))
+	local path = accountFile(self.name)
+	minetest.debug(string.format("[Bank] saving account %s to %s ", self.name, path))
 	
 	local output = io.open(path, "w")
 	-- remove transient flag direclty before serializing
@@ -111,7 +114,7 @@ function BankAccount:save()
 	io.close(output)
 	
 	-- update cache
-	economy.bank.accounts[name] = self
+	economy.bank.accounts[self.name] = self
 	return true
 end
 
@@ -123,7 +126,7 @@ economy.bank.accounts = economy.bank.accounts or {}
 function economy.bank.createAccount(name)
 	local initialAmount = math.floor(economy.config:get("initial_amount"))
 	minetest.debug(string.format("[Bank] creating account %s with %s", name, economy.formatMoney(initialAmount)))
-	return BankAccount:new{owner=name, balance=initialAmount, transient=true}
+	return BankAccount:new{name=name, balance=initialAmount, transient=true}
 end
 
 function economy.bank.loadAccount(name)
@@ -153,7 +156,7 @@ function economy.bank.importAccount(name)
 	io.close(output)
 
 	minetest.log("info", string.format("[Bank] imported account %s with %s", name, economy.formatMoney(balance)))
-	return BankAccount:new{owner=name, balance=balance, transient=true}
+	return BankAccount:new{name=name, balance=balance, transient=true}
 end
 
 function economy.bank.getAccount(name)

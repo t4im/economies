@@ -124,6 +124,8 @@ function Transaction:commit()
 	end
 
 	local from, to  = self:from(), self:to()
+	local fromOwner, toOwner = from:getOwner(), to:getOwner()
+
 	minetest.log("action", "[Bank] " .. self:describe())
 
 	from.balance = from.balance - self.amount
@@ -131,10 +133,10 @@ function Transaction:commit()
 
 	local amountString = economy.formatMoney(self.amount)
 	local transactionType = self:type()
-	minetest.chat_send_player(from.owner, string.format("You paid %s to %s via %s transfer", amountString, to.owner, transactionType))
-	minetest.chat_send_player(to.owner, string.format("%s paid you %s via %s transfer", from.owner, amountString, transactionType))
+	minetest.chat_send_player(fromOwner, string.format("You paid %s to %s via %s transfer", amountString, toOwner, transactionType))
+	minetest.chat_send_player(toOwner, string.format("%s paid you %s via %s transfer", fromOwner, amountString, transactionType))
 	if self.subject then
-		minetest.chat_send_player(to.owner, "Subject: " .. self.subject)
+		minetest.chat_send_player(toOwner, "Subject: " .. self.subject)
 	end
 
 	return from:save() and to:save()

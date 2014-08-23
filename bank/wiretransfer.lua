@@ -51,7 +51,7 @@ function economy.bank.openWireFormspec(player)
 	local playername = player:get_player_name()
 	local account = economy.bank.getAccount(playername)
 	local formspec = "size[10,7]"..
-		"label[0.75,0.75; Welcome " .. account.owner .. "]" ..
+		"label[0.75,0.75; Welcome " .. playername .. "]" ..
 		"label[5,0.75;" ..
 			"Balance: " .. account:printBalance() .. "\n" ..
 			"Frozen: " .. (account.frozen or "no") .. "]" ..
