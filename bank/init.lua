@@ -12,10 +12,13 @@ dofile(economy.bank.modpath.."/config.lua")
 -- common helper functions
 dofile(economy.bank.modpath.."/common.lua")
 
--- load accounting class and methods
+-- load classes and related api
 dofile(economy.bank.modpath.."/bankaccount.lua")
--- add bankaccount operations
+dofile(economy.bank.modpath.."/transaction.lua")
+
+-- add operational code
 dofile(economy.bank.modpath.."/wiretransfer.lua")
 dofile(economy.bank.modpath.."/control.lua")
+
 -- extra nodes
 dofile(economy.bank.modpath.."/atm.lua")
