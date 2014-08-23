@@ -10,17 +10,12 @@ local forsale_construct = economy.realestate.landsale.construct
 
 local determine_sign_type = function(itemstack, placer, pointed_thing)
 	local name = minetest.get_node(pointed_thing.above).name
-	local def = minetest.registered_nodes[name]
-	if not def.buildable_to then
-		return itemstack
-	end
-	if minetest.is_protected(pointed_thing.above, placer:get_player_name()) then
-		minetest.record_protection_violation(pointed_thing.above,
-			placer:get_player_name())
+
+	if not economy.buildableTo(pointed_thing.above, placer, reportViolation) then
 		return itemstack
 	end
 
-	local node=minetest.get_node(pointed_thing.under)
+	local node = minetest.get_node(pointed_thing.under)
 
 	if minetest.registered_nodes[node.name] and minetest.registered_nodes[node.name].on_rightclick then
 		return minetest.registered_nodes[node.name].on_rightclick(pointed_thing.under, node, placer, itemstack)
@@ -31,30 +26,23 @@ local determine_sign_type = function(itemstack, placer, pointed_thing)
 			y = under.y - above.y,
 			z = under.z - above.z}
 
-		local wdir = minetest.dir_to_wallmounted(dir)
+		local walldir = minetest.dir_to_wallmounted(dir)
 
 		local placer_pos = placer:getpos()
 		if placer_pos then
-			dir = {
-				x = above.x - placer_pos.x,
+			dir = {	x = above.x - placer_pos.x,
 				y = above.y - placer_pos.y,
-				z = above.z - placer_pos.z
-			}
+				z = above.z - placer_pos.z }
 		end
 
-		local fdir = minetest.dir_to_facedir(dir)
+		local facedir = minetest.dir_to_facedir(dir)
 
-		local sign_info
-		local pt_name = minetest.get_node(under).name
-		print(dump(pt_name))
-		local signname = itemstack:get_name()
-
-		if wdir == 0 then
-			minetest.add_node(above, {name = "realestate:forsale_sign_hanging", param2 = fdir})
-		elseif wdir == 1 then
-			minetest.add_node(above, {name = "realestate:forsale_sign_yard", param2 = fdir})
-		else -- it must be a wooden or metal wall sign.
-			minetest.add_node(above, {name = signname, param2 = fdir})
+		if walldir == 0 then
+			minetest.add_node(above, {name = "realestate:forsale_sign_hanging", param2 = facedir})
+		elseif walldir == 1 then
+			minetest.add_node(above, {name = "realestate:forsale_sign_yard", param2 = facedir})
+		else -- it must be a wall mounted sign.
+			minetest.add_node(above, {name = itemstack:get_name(), param2 = facedir})
 		end
 
 		itemstack:take_item()
@@ -78,7 +66,7 @@ minetest.register_node("realestate:forsale_sign", {
 	tiles = {"forsale_sign_borders.png", "forsale_sign_borders.png",
 		"forsale_sign_borders.png", "forsale_sign_borders.png",
 		"forsale_sign.png", "forsale_sign.png"},
-	groups = sign_groups,
+	groups = {choppy=2, dig_immediate=2},
 	on_place = determine_sign_type,
 	on_construct = forsale_construct,
 	on_receive_fields = forsale_receive_fields,
