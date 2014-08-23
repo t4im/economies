@@ -81,10 +81,6 @@ function BankAccount:withdraw(amount)
 	return self:save()
 end
 
-function BankAccount:transferTo(other, amount, subject)
-	return economy.bank.transfer(Transaction:new{source=self.owner, target=other.owner, amount=amount, subject=subject})
-end
-
 function BankAccount:freeze(reason)
 	if not self:exists() then return false, "neither account nor player exist" end
 

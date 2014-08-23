@@ -104,30 +104,30 @@ function Transaction:check()
 	return true
 end
 
--- ==================
--- Transaction management
--- ==================
-
-function economy.bank.transfer(transaction)
-	local good, feedback = transaction:check()
+function Transaction:commit()
+	local good, feedback = self:check()
 	if not good then
 		return false, feedback
 	end
 
-	local from, to  = transaction:from(), transaction:to()
+	local from, to  = self:from(), self:to()
+	minetest.log("action", "[Bank] " .. self:describe())
 
-	minetest.log("action", string.format("[Bank] transfer: %d (%s -> %s) %s", transaction.amount, from.owner, to.owner, transaction.subject or ""))
+	from.balance = from.balance - self.amount
+	to.balance = to.balance + self.amount
 
-	from.balance = from.balance - transaction.amount
-	to.balance = to.balance + transaction.amount
-
-	local amountString = economy.formatMoney(transaction.amount)
+	local amountString = economy.formatMoney(self.amount)
 	minetest.chat_send_player(from.owner, string.format("You paid %s to %s", amountString, to.owner))
 	minetest.chat_send_player(to.owner, string.format("%s paid you %s", from.owner, amountString))
-
-	if transaction.subject then
-		minetest.chat_send_player(to.owner, "Subject: " .. transaction.subject)
+	if self.subject then
+		minetest.chat_send_player(to.owner, "Subject: " .. self.subject)
 	end
 
 	return from:save() and to:save()
+end
+
+function Transaction:checkAndCommit()
+	local good, feedback = self:check()
+	if not good then return false, feedback end
+	return self:commit()
 end

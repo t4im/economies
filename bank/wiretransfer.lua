@@ -36,7 +36,7 @@ function economy.bank.wire(from, to, amount, subject)
 		return false
 	end
 
-	return economy.feedbackTo(name, sourceAccount:transferTo(targetAccount, amount, subject))
+	return transaction:commit()
 end
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
