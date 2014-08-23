@@ -47,8 +47,9 @@ function Transaction:type()
 		return "wire"
 	elseif self.initiator == self.target then
 		return "debit"
-	else
-		local privs = minetest.get_player_privs(self.initiator)
+	end
+	local privs = minetest.get_player_privs(self.initiator)
+	if privs.money then
 		if privs.bank_teller or privs.bank_admin then
 			return "admin"
 		end
