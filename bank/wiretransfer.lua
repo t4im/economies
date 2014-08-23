@@ -2,16 +2,11 @@ economy = economy or {}
 economy.bank = economy.bank or {}
 
 function economy.bank.wire(from, to, amount, subject)
-	-- lets ignore these already here to prevent a player from accidentally freezing his own account (see below)
-	if(from == to or amount == 0 or not to or to == "") then
-		minetest.chat_send_player(from, "Successfully done nothing.")
-		return false
-	end
+	local transaction = Transaction:new{source=from, target=to, amount=amount, subject=subject}
 
-	-- check if source is frozen
-	local sourceAccount = economy.bank.getAccount(from)
-	if (sourceAccount.frozen) then
-		minetest.chat_send_player(from, "Your account is currently frozen.")
+	local good, feedback = transaction:check()
+	if not good then
+		minetest.chat_send_player(from, feedback or "Wire transfer failed")
 		return false
 	end
 
@@ -22,13 +17,6 @@ function economy.bank.wire(from, to, amount, subject)
 	local targetPlayer = minetest.get_player_by_name(to)
 	if (not targetPlayer) then
 		minetest.chat_send_player(from, to .. " is currently offline.")
-		return false
-	end
-
-	-- check if target is frozen
-	local targetAccount = economy.bank.getAccount(to)
-	if (targetAccount.frozen) then
-		minetest.chat_send_player(from, "The target account is currently frozen.")
 		return false
 	end
 

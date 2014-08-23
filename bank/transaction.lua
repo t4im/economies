@@ -103,3 +103,31 @@ function Transaction:check()
 
 	return true
 end
+
+-- ==================
+-- Transaction management
+-- ==================
+
+function economy.bank.transfer(transaction)
+	local good, feedback = transaction:check()
+	if not good then
+		return false, feedback
+	end
+
+	local from, to  = transaction:from(), transaction:to()
+
+	minetest.log("action", string.format("[Bank] transfer: %d (%s -> %s) %s", transaction.amount, from.owner, to.owner, transaction.subject or ""))
+
+	from.balance = from.balance - transaction.amount
+	to.balance = to.balance + transaction.amount
+
+	local amountString = economy.formatMoney(transaction.amount)
+	minetest.chat_send_player(from.owner, string.format("You paid %s to %s", amountString, to.owner))
+	minetest.chat_send_player(to.owner, string.format("%s paid you %s", from.owner, amountString))
+
+	if transaction.subject then
+		minetest.chat_send_player(to.owner, "Subject: " .. transaction.subject)
+	end
+
+	return from:save() and to:save()
+end

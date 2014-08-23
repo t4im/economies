@@ -81,35 +81,8 @@ function BankAccount:withdraw(amount)
 	return self:save()
 end
 
--- subject is optional
 function BankAccount:transferTo(other, amount, subject)
-	if not self:exists() then return false, "source: neither account nor player exist" end
-	if not other:exists() then return false, "target: neither account nor player exist" end
-
-	local amount, feedback = economy.sanitizeAmount(amount)
-	if not amount then return false, feedback end
-
-	-- transferring to oneself is always a neutral action
-	if(self:name() == other:name()) then return end
-
-	local solvent, feedback = self:assertSolvency(amount)
-	if not solvent then return solvent, feedback end
-	
-	local amountString = economy.formatMoney(amount)
-
-	minetest.log("action", string.format("[Bank] transfer: %d (%s -> %s) %s", amount, self.owner, other.owner, subject or ""))
-
-	self.balance = self.balance - amount
-	other.balance = other.balance + amount
-
-	minetest.chat_send_player(self.owner, string.format("You paid %s to %s", amountString, other.owner))
-	minetest.chat_send_player(other.owner, string.format("%s paid you %s", self.owner, amountString))
-
-	if subject then
-		minetest.chat_send_player(other.owner, "Subject: " .. subject)
-	end
-
-	return self:save() and other:save()
+	return economy.bank.transfer(Transaction:new{source=self.owner, target=other.owner, amount=amount, subject=subject})
 end
 
 function BankAccount:freeze(reason)

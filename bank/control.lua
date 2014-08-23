@@ -31,20 +31,24 @@ minetest.register_chatcommand("bankadmin", {
 
 		-- parse the parameters
 		local args = string.split(param, " ")
-        local command, accountName = args[1], args[2]
+		local command, accountName = args[1], args[2]
 
 		if accountName then
-			local account = economy.bank.getAccount(accountName)
-
 			if (command == "transfer") then
 				local target, transferAmount, subject = string.match(param, "transfer [^ ]+ ([^ ]+) ([0-9]+) ?(.*)")
 				if(transferAmount and target) then
-					local targetAccount = economy.bank.getAccount(target)
 					-- add the information, that this was an admin action and by whome
 					subject = name .. " enforced transfer. " .. (subject or "")
-					return economy.feedbackTo(name, account:transferTo(targetAccount, transferAmount, subject))
+					return economy.feedbackTo(name, economy.bank.transfer(Transaction:new{
+						initiator=name,
+						source=accountName, target=target,
+						amount=transferAmount, subject=subject
+					}))
 				end
-			elseif (command == "freeze" and args[3]) then
+			end
+
+			local account = economy.bank.getAccount(accountName)
+			if (command == "freeze" and args[3]) then
 				-- args[3] is just the first word though enough for the test
 				local reason = string.match(param, "freeze [^ ]+ (.+)")
 				return economy.feedbackTo(name, account:freeze(reason))
