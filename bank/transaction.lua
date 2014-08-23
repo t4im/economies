@@ -98,4 +98,6 @@ function Transaction:check()
 
 	local legit, feedback = self:isLegit()
 	if not legit then return false, feedback end
+
+	return true
 end
