@@ -29,19 +29,19 @@ end
 function Transaction:printDate(format) return os.date(format or "%Y-%m-%d %H:%M:%S", self.time) end
 function Transaction:printAmount() return economy.formatMoney(self.amount) end
 
-function Transaction:from() return economy.bank.getAccount(source) end
-function Transaction:to() return economy.bank.getAccount(target) end
+function Transaction:from() return economy.bank.getAccount(self.source) end
+function Transaction:to() return economy.bank.getAccount(self.target) end
 
 -- a different question as to from whome the transaction debits is:
 -- who initated the transaction? might have been some admin enforcing it, or some process/mod/machine
 -- if nil, the initiator is assumed to be the source
-function Transaction:initiator() return initiator or source end
+function Transaction:initiator() return self.initiator or self.source end
 
 function Transaction:describe()
 	local initiator_prefix = ""
-	if initiator then initiator_prefix = initiator .. ": " end
+	if self.initiator then initiator_prefix = self.initiator .. ": " end
 
-	return string.format("transfer %d (%s%s -> %s) %s", amount, initiator_prefix, source, target, subject or "-")
+	return string.format("transfer %d (%s%s -> %s) %s", self.amount, initiator_prefix, self.source, self.target, self.subject or "-")
 end
 
 function Transaction:isPointless()
@@ -79,10 +79,10 @@ function Transaction:isLegit()
 	local from, to = self:from(), self:to()
 
 	-- check if source is frozen
-	if (sourceAccount.frozen) then
+	if (from.frozen) then
 		return false, "The originating account is currently frozen."
 	-- check if target is frozen
-	elseif (targetAccount.frozen) then
+	elseif (to.frozen) then
 		return false, "The target account is currently frozen."
 	end
 
