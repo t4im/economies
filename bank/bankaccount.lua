@@ -188,6 +188,7 @@ function economy.bank.importAccount(name)
 end
 
 function economy.bank.getAccount(name)
+	assert(name and name ~= "", "Eeek! Something tried to get no account.")
 	local account = economy.bank.accounts[name]
 						or economy.bank.loadAccount(name)
 						or economy.bank.importAccount(name)
