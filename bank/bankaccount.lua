@@ -33,6 +33,8 @@ function BankAccount:name() return self.owner end
 function BankAccount:printBalance() return economy.formatMoney(self.balance) end
 -- return false if frozen with reason or true with 'nil' as reason
 function BankAccount:assertActive()	return not self.frozen, self.frozen end
+-- either account or playerfile with money privilege must exist
+function BankAccount:exists() return (not self.transient) or minetest.get_player_privs(self.owner).money end
 
 function BankAccount:describe()
 	return string.format("'%s' with %s. Frozen: %s", self:name(), self:printBalance(), self.frozen or "no")
@@ -46,6 +48,8 @@ function BankAccount:assertSolvency(amount)
 end
 
 function BankAccount:set(amount)
+	if not self:exists() then return false, "neither account nor player exist" end
+
 	local amount, feedback = economy.sanitizeAmount(amount)
 	if not amount then return false, feedback end
 
@@ -54,6 +58,8 @@ function BankAccount:set(amount)
 end
 
 function BankAccount:deposit(amount)
+	if not self:exists() then return false, "neither account nor player exist" end
+
 	local amount, feedback = economy.sanitizeAmount(amount)
 	if not amount then return false, feedback end
 	
@@ -62,6 +68,8 @@ function BankAccount:deposit(amount)
 end
 
 function BankAccount:withdraw(amount)
+	if not self:exists() then return false, "neither account nor player exist" end
+
 	local amount, feedback = economy.sanitizeAmount(amount)
 	if not amount then return false, feedback end
 
@@ -74,6 +82,9 @@ end
 
 -- subject is optional
 function BankAccount:transferTo(other, amount, subject)
+	if not self:exists() then return false, "source: neither account nor player exist" end
+	if not other:exists() then return false, "target: neither account nor player exist" end
+
 	local amount, feedback = economy.sanitizeAmount(amount)
 	if not amount then return false, feedback end
 
@@ -101,6 +112,8 @@ function BankAccount:transferTo(other, amount, subject)
 end
 
 function BankAccount:freeze(reason)
+	if not self:exists() then return false, "neither account nor player exist" end
+
 	minetest.log("action", string.format("Bank: freezing account %s for %s", self:name(), reason))
 	self.frozen = reason
 	minetest.chat_send_player(self.owner, "Your bankaccount has been frozen: " .. reason)
@@ -108,6 +121,8 @@ function BankAccount:freeze(reason)
 end
 
 function BankAccount:unfreeze()
+	if not self:exists() then return false, "neither account nor player exist" end
+
 	minetest.log("action", "unfreezing account: " .. self:name())
 	self.frozen = nil
 	minetest.chat_send_player(self.owner, "Your bankaccount has been unfrozen.")
