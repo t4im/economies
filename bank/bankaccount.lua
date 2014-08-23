@@ -1,20 +1,11 @@
---
--- Bankaccount framework
---
-
--- ======
--- Helper
--- ======
-
-local accountFile = function(name)
-	return minetest.get_worldpath() .. economy.config:get("bank_path") .. "/" .. name .. ".txt"
-end
+economy = economy or {}
+economy.bank = economy.bank or {}
 
 -- =============
 -- Account class
 -- =============
  
-BankAccount = {
+economy.bank.Account = {
 	name = nil, -- account id
 	owner = nil,  -- account holder/owner
 	balance = 0,
@@ -23,7 +14,7 @@ BankAccount = {
 	transient = nil,
 }
 
-function BankAccount:new(object)
+function economy.bank.Account:new(object)
 	object = object or {}
 	setmetatable(object, self)
 	self.__index = self
@@ -33,26 +24,26 @@ function BankAccount:new(object)
 end
 
 -- at this time owner and name are identical, but this might be changed in the future
-function BankAccount:getOwner() return self.owner or name end
+function economy.bank.Account:getOwner() return self.owner or name end
 
-function BankAccount:printBalance() return economy.formatMoney(self.balance) end
+function economy.bank.Account:printBalance() return economy.formatMoney(self.balance) end
 -- return false if frozen with reason or true with 'nil' as reason
-function BankAccount:assertActive()	return not self.frozen, self.frozen end
+function economy.bank.Account:assertActive()	return not self.frozen, self.frozen end
 -- either account or playerfile with money privilege must exist
-function BankAccount:exists() return (not self.transient) or minetest.get_player_privs(self:getOwner()).money end
+function economy.bank.Account:exists() return (not self.transient) or minetest.get_player_privs(self:getOwner()).money end
 
-function BankAccount:describe()
+function economy.bank.Account:describe()
 	return string.format("'%s' with %s. Frozen: %s", self.name, self:printBalance(), self.frozen or "no")
 end
 
-function BankAccount:assertSolvency(amount)
+function economy.bank.Account:assertSolvency(amount)
 	if(amount > self.balance) then
 		return false, string.format("Not enough funds. There is only %s available.", self:printBalance())
 	end
 	return true
 end
 
-function BankAccount:set(amount)
+function economy.bank.Account:set(amount)
 	if not self:exists() then return false, "neither account nor player exist" end
 
 	local amount, feedback = economy.sanitizeAmount(amount)
@@ -62,7 +53,7 @@ function BankAccount:set(amount)
 	return self:save()
 end
 
-function BankAccount:deposit(amount)
+function economy.bank.Account:deposit(amount)
 	if not self:exists() then return false, "neither account nor player exist" end
 
 	local amount, feedback = economy.sanitizeAmount(amount)
@@ -72,7 +63,7 @@ function BankAccount:deposit(amount)
 	return self:save()
 end
 
-function BankAccount:withdraw(amount)
+function economy.bank.Account:withdraw(amount)
 	if not self:exists() then return false, "neither account nor player exist" end
 
 	local amount, feedback = economy.sanitizeAmount(amount)
@@ -85,7 +76,7 @@ function BankAccount:withdraw(amount)
 	return self:save()
 end
 
-function BankAccount:freeze(reason)
+function economy.bank.Account:freeze(reason)
 	if not self:exists() then return false, "neither account nor player exist" end
 
 	minetest.log("action", string.format("Bank: freezing account %s for %s", self.name, reason))
@@ -94,7 +85,7 @@ function BankAccount:freeze(reason)
 	return self:save()
 end
 
-function BankAccount:unfreeze()
+function economy.bank.Account:unfreeze()
 	if not self:exists() then return false, "neither account nor player exist" end
 
 	minetest.log("action", "unfreezing account: " .. self.name)
@@ -103,7 +94,7 @@ function BankAccount:unfreeze()
 	return self:save()
 end
 
-function BankAccount:save()
+function economy.bank.Account:save()
 	local path = accountFile(self.name)
 	minetest.debug(string.format("[Bank] saving account %s to %s ", self.name, path))
 	
@@ -123,10 +114,14 @@ end
 -- ==================
 economy.bank.accounts = economy.bank.accounts or {}
 
+local accountFile = function(name)
+	return minetest.get_worldpath() .. economy.config:get("bank_path") .. "/" .. name .. ".txt"
+end
+
 function economy.bank.createAccount(name)
 	local initialAmount = math.floor(economy.config:get("initial_amount"))
 	minetest.debug(string.format("[Bank] creating account %s with %s", name, economy.formatMoney(initialAmount)))
-	return BankAccount:new{name=name, balance=initialAmount, transient=true}
+	return economy.bank.Account:new{name=name, balance=initialAmount, transient=true}
 end
 
 function economy.bank.loadAccount(name)
@@ -140,7 +135,7 @@ function economy.bank.loadAccount(name)
 	io.close(input)
 
 	-- wrap it into a class
-	account = BankAccount:new(account)
+	account = economy.bank.Account:new(account)
 
 	return account
 end
@@ -156,7 +151,7 @@ function economy.bank.importAccount(name)
 	io.close(output)
 
 	minetest.log("info", string.format("[Bank] imported account %s with %s", name, economy.formatMoney(balance)))
-	return BankAccount:new{name=name, balance=balance, transient=true}
+	return economy.bank.Account:new{name=name, balance=balance, transient=true}
 end
 
 function economy.bank.getAccount(name)

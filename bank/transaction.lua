@@ -2,10 +2,10 @@ economy = economy or {}
 economy.bank = economy.bank or {}
 
 -- =================
--- Transaction class
+-- economy.bank.Transaction class
 -- =================
 
-Transaction = {
+economy.bank.Transaction = {
 	time = nil,
 	subject = nil,
 	location = nil,
@@ -16,7 +16,7 @@ Transaction = {
 	initiator = nil
 }
 
-function Transaction:new(object)
+function economy.bank.Transaction:new(object)
 	object = object or {}
 	setmetatable(object, self)
 	self.__index = self
@@ -27,20 +27,20 @@ function Transaction:new(object)
 	return object
 end
 
-function Transaction:printDate(format) return os.date(format or "%Y-%m-%d %H:%M:%S", self.time) end
-function Transaction:printAmount() return economy.formatMoney(self.amount) end
+function economy.bank.Transaction:printDate(format) return os.date(format or "%Y-%m-%d %H:%M:%S", self.time) end
+function economy.bank.Transaction:printAmount() return economy.formatMoney(self.amount) end
 
-function Transaction:from() return economy.bank.getAccount(self.source) end
-function Transaction:to() return economy.bank.getAccount(self.target) end
+function economy.bank.Transaction:from() return economy.bank.getAccount(self.source) end
+function economy.bank.Transaction:to() return economy.bank.getAccount(self.target) end
 
 -- a different question as to from whome the transaction debits is:
 -- who initated the transaction? might have been some admin enforcing it, or some process/mod/machine
 -- if nil, the initiator is assumed to be the source
-function Transaction:initiator() return self.initiator or self.source end
+function economy.bank.Transaction:initiator() return self.initiator or self.source end
 
-function Transaction:describe() return ("%s transfers %d (%s -> %s) %s"):format(self.initiator or "player", self.amount, self.source, self.target, self.subject or "-") end
+function economy.bank.Transaction:describe() return ("%s transfers %d (%s -> %s) %s"):format(self.initiator or "player", self.amount, self.source, self.target, self.subject or "-") end
 
-function Transaction:type()
+function economy.bank.Transaction:type()
 	if type then
 		return type
 	elseif not self.initiator or self.initiator == self.source then
@@ -58,7 +58,7 @@ function Transaction:type()
 	return "unknown"
 end
 
-function Transaction:isPointless()
+function economy.bank.Transaction:isPointless()
 	if	-- transferring from noone
 		not self.source or self.source == ""
 		-- or transferring to noone
@@ -75,7 +75,7 @@ function Transaction:isPointless()
 	return false
 end
 
-function Transaction:isValid()
+function economy.bank.Transaction:isValid()
 	local from, to = self:from(), self:to()
 	if not from:exists() then return false, "source: neither account nor player exist" end
 	if not to:exists() then return false, "target: neither account nor player exist" end
@@ -91,7 +91,7 @@ function Transaction:isValid()
 	return true
 end
 
-function Transaction:isLegit()
+function economy.bank.Transaction:isLegit()
 	local from, to = self:from(), self:to()
 
 	if self:type() == "admin" then
@@ -109,7 +109,7 @@ function Transaction:isLegit()
 	return true
 end
 
-function Transaction:check()
+function economy.bank.Transaction:check()
 	local pointless, feedback = self:isPointless()
 	if pointless then return false, feedback end
 
@@ -122,7 +122,7 @@ function Transaction:check()
 	return true
 end
 
-function Transaction:commit()
+function economy.bank.Transaction:commit()
 	local good, feedback = self:check()
 	if not good then
 		return false, feedback
@@ -147,7 +147,7 @@ function Transaction:commit()
 	return from:save() and to:save()
 end
 
-function Transaction:checkAndCommit()
+function economy.bank.Transaction:checkAndCommit()
 	local good, feedback = self:check()
 	if not good then return false, feedback end
 	return self:commit()

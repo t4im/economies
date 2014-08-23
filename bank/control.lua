@@ -45,7 +45,7 @@ minetest.register_chatcommand("bankadmin", {
 				if(transferAmount and target) then
 					-- add the information, that this was an admin action and by whome
 					subject = name .. " enforced transfer. " .. (subject or "")
-					return economy.feedbackTo(name, Transaction:new{
+					return economy.feedbackTo(name, economy.bank.Transaction:new{
 						initiator=name,
 						source=accountName, target=target,
 						amount=transferAmount, subject=subject

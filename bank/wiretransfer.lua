@@ -2,7 +2,7 @@ economy = economy or {}
 economy.bank = economy.bank or {}
 
 function economy.bank.wire(from, to, amount, subject)
-	local transaction = Transaction:new{source=from, target=to, amount=amount, subject=subject}
+	local transaction = economy.bank.Transaction:new{source=from, target=to, amount=amount, subject=subject}
 
 	local good, feedback = transaction:check()
 	if not good then
