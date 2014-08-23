@@ -93,6 +93,10 @@ end
 function Transaction:isLegit()
 	local from, to = self:from(), self:to()
 
+	if self:type() == "admin" then
+		return true
+	end
+
 	-- check if source is frozen
 	if (from.frozen) then
 		return false, "The originating account is currently frozen."
