@@ -39,6 +39,21 @@ function Transaction:initiator() return self.initiator or self.source end
 
 function Transaction:describe() return ("%s transfers %d (%s -> %s) %s"):format(self.initiator or "player", self.amount, self.source, self.target, self.subject or "-") end
 
+function Transaction:type()
+	if not self.initiator or self.initiator == self.source then
+		return "wire"
+	elseif self.initiator == self.target then
+		return "debit"
+	else
+		local privs = minetest.get_player_privs(self.initiator)
+		if privs.money_admin then
+			return "admin"
+		end
+		assert(not privs.money, "it appears " .. self.initiator .. " has managed to get a hold on money admin functionality without having the necessary privs")
+	end
+	return "unknown"
+end
+
 function Transaction:isPointless()
 	if	-- transferring from noone
 		not self.source or self.source == ""
@@ -112,8 +127,9 @@ function Transaction:commit()
 	to.balance = to.balance + self.amount
 
 	local amountString = economy.formatMoney(self.amount)
-	minetest.chat_send_player(from.owner, string.format("You paid %s to %s", amountString, to.owner))
-	minetest.chat_send_player(to.owner, string.format("%s paid you %s", from.owner, amountString))
+	local transactionType = self:type()
+	minetest.chat_send_player(from.owner, string.format("You paid %s to %s via %s transfer", amountString, to.owner, transactionType))
+	minetest.chat_send_player(to.owner, string.format("%s paid you %s via %s transfer", from.owner, amountString, transactionType))
 	if self.subject then
 		minetest.chat_send_player(to.owner, "Subject: " .. self.subject)
 	end
