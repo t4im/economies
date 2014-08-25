@@ -11,6 +11,7 @@ economy.bank.modpath = minetest.get_modpath("bank")
 dofile(economy.bank.modpath.."/config.lua")
 -- common helper functions
 dofile(economy.bank.modpath.."/common.lua")
+dofile(economy.bank.modpath.."/notifications.lua")
 
 -- load classes and related api
 dofile(economy.bank.modpath.."/bankaccount.lua")

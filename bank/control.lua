@@ -13,14 +13,10 @@ minetest.register_privilege("bank_admin", {
 economy = economy or {}
 economy.bank = economy.bank or {}
 
-function economy.bank.alertAdmins(message)
-	for _,player in ipairs(minetest.get_connected_players()) do
-		local name = player:get_player_name()
-		local privs = minetest.get_player_privs(name)
-		if privs.ban or privs.bank_teller then
-			minetest.chat_send_player(name, string.format("[Bank] <ALERT> %s", message))
-		end
-	end
+-- used for notifications of malicious behavior
+function economy.bank.isSupervisor(player)
+	local privs = minetest.get_player_privs(name)
+	return privs.ban or privs.bank_teller
 end
 
 local bank_admin_params = "show/unfreeze <account> | freeze <account> <reason> | deposit/withdraw/set <account> <amount> | transfer <source> <target> <amount> [<subject>]"
