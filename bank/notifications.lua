@@ -1,19 +1,28 @@
 --
 -- Player notification
 --
-function economy.notify(player, notification)
+function economy.notify(player, message, ...)
 	local name = player:get_player_name()
-	minetest.chat_send_player(name, notification)
+	if arg.n > 0
+		then message = message:format(unpack(arg))
+	end
+	minetest.chat_send_player(name, message)
 end
 
-function economy.notifyAll(notification)
-	minetest.chat_send_all(notification)
+function economy.notifyAll(message, ...)
+	if arg.n > 0 then
+		message = message:format(unpack(arg))
+	end
+	minetest.chat_send_all(message)
 end
 
-function economy.notifyAny(condition, notification)
+function economy.notifyAny(condition, message, ...)
+	if arg.n > 0 then
+		message = message:format(unpack(arg))
+	end
 	for _,player in ipairs(minetest.get_connected_players()) do
 		if condition(player) then
-			economy.notify(player, notification)
+			economy.notify(player, message)
 		end
 	end
 end

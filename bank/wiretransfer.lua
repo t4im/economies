@@ -26,10 +26,10 @@ function economy.bank.wire(from, to, amount, subject)
 		sourceAccount:freeze(string.format("attempt to transfer %s to %s, having the same ip address", economy.formatMoney(amount), to))
 		targetAccount:freeze(string.format("target of an attempt to transfer %s from %s, having the same ip address", economy.formatMoney(amount), from))
 
-		economy.notifyAny(economy.bank.isSupervisor, string.format(
+		economy.notifyAny(economy.bank.isSupervisor,
 			"%s tried to transfer %s to %s. Both clients are connected from the same IP address. The Accounts were preventively frozen.",
 			from, economy.formatMoney(amount), to
-		))
+		)
 		minetest.chat_send_player(from,
 			"You tried to transfer money to an account that originates from the same network as you.\n" ..
 			"To prevent potential abuse the transfer was denied and admins were notified."
