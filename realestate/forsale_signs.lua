@@ -125,3 +125,12 @@ minetest.register_node("realestate:forsale_sign_hanging", {
 	on_construct = forsale_construct,
 	on_punch = forsale_punch
 })
+
+minetest.register_craft({
+	output = 'realestate:forsale_sign',
+	recipe = {
+		{'dye:red', 'dye:white', 'dye:red'},
+		{'dye:white', 'default:sign_wall', 'dye:white'},
+		{'dye:red', 'dye:white', 'dye:red'},
+	}
+})
