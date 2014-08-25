@@ -54,14 +54,15 @@ function economy.realestate.landsale.punch(pos, node, puncher)
 		return
 	end
 
-	local transferAmount = meta:get_int("price")
+	local price = meta:get_int("price")
 	local landname = meta:get_string("name")
 	local subject = string.format("Landsale at %s %s", minetest.pos_to_string(pos), landname or "")
 
-	local transaction = economy.bank.Transaction:new{source=name, target=seller, amount=transferAmount, subject=subject, location=pos}
+	local transaction = economy.bank.Transaction:new{source=name, target=seller, amount=price, subject=subject, location=pos}
 
 	-- if transfer successfull (especially after balance check)
 	if economy.feedbackTo(name, transaction:checkAndCommit()) then
+		economy.logAction("%s (%s->%s) for %d", subject, seller, name, price)
 		economy.realestate.transfer(pos, node, puncher)
 		minetest.remove_node(pos)
 		minetest.chat_send_player(puncher:get_player_name(), "Congratulations! This land is now yours.")
