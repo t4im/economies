@@ -56,7 +56,7 @@ function economy.realestate.landsale.punch(pos, node, puncher)
 
 	local transferAmount = meta:get_int("price")
 	local landname = meta:get_string("name")
-	local subject = string.format("Landsale at (%d,%d) %s", pos.x, pos.z, landname or "")
+	local subject = string.format("Landsale at %s %s", minetest.pos_to_string(pos), landname or "")
 
 	local transaction = economy.bank.Transaction:new{source=name, target=seller, amount=transferAmount, subject=subject, location=pos}
 
