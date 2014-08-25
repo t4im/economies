@@ -131,7 +131,7 @@ function economy.bank.Transaction:commit()
 	local from, to  = self:from(), self:to()
 	local fromOwner, toOwner = from:getOwner(), to:getOwner()
 
-	minetest.log("action", "[Bank] " .. self:describe())
+	economy.logAction(self:describe())
 
 	from.balance = from.balance - self.amount
 	to.balance = to.balance + self.amount

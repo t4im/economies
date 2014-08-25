@@ -18,4 +18,20 @@ function economy.notifyAny(condition, notification)
 	end
 end
 
+--
+-- Log notification
+--
 
+local logPrefix = ("[%s] "):format(minetest.get_current_modname())
+function economy.logAction(message, ...)
+	if arg.n > 0 then
+		message = message:format(unpack(arg))
+	end
+	minetest.log("action", logPrefix .. message)
+end
+function economy.debug(message, ...)
+	if arg.n > 0 then
+		message = message:format(unpack(arg))
+	end
+	minetest.debug(logPrefix .. message)
+end

@@ -79,7 +79,7 @@ end
 function economy.bank.Account:freeze(reason)
 	if not self:exists() then return false, "neither account nor player exist" end
 
-	minetest.log("action", string.format("Bank: freezing account %s for %s", self.name, reason))
+	economy.logAction("freezing account %s for %s", self.name, reason)
 	self.frozen = reason
 	minetest.chat_send_player(self:getOwner(), "Your bankaccount has been frozen: " .. reason)
 	return self:save()
@@ -87,8 +87,7 @@ end
 
 function economy.bank.Account:unfreeze()
 	if not self:exists() then return false, "neither account nor player exist" end
-
-	minetest.log("action", "unfreezing account: " .. self.name)
+	economy.logAction("unfreezing account: " .. self.name)
 	self.frozen = nil
 	minetest.chat_send_player(self:getOwner(), "Your bankaccount has been unfrozen.")
 	return self:save()
@@ -96,7 +95,7 @@ end
 
 function economy.bank.Account:save()
 	local path = accountFile(self.name)
-	minetest.debug(string.format("[Bank] saving account %s to %s ", self.name, path))
+	economy.debug("saving account %s to %s ", self.name, path)
 	
 	local output = io.open(path, "w")
 	-- remove transient flag direclty before serializing
@@ -120,7 +119,7 @@ end
 
 function economy.bank.createAccount(name)
 	local initialAmount = math.floor(economy.config:get("initial_amount"))
-	minetest.debug(string.format("[Bank] creating account %s with %s", name, economy.formatMoney(initialAmount)))
+	economy.debug("creating account %s with %s", name, economy.formatMoney(initialAmount))
 	return economy.bank.Account:new{name=name, balance=initialAmount, transient=true}
 end
 
@@ -130,7 +129,7 @@ function economy.bank.loadAccount(name)
 	local input = io.open(path, "r")
 	if(not input) then return nil end
 
-	minetest.debug(string.format("[Bank] loading account %s from %s", name, path))
+	economy.debug("loading account %s from %s", name, path)
 	local account = minetest.deserialize(input:read("*all"))
 	io.close(input)
 

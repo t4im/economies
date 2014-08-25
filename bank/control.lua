@@ -67,13 +67,13 @@ minetest.register_chatcommand("bankadmin", {
 			elseif (command == "unfreeze") then
 				return economy.feedbackTo(name, account:unfreeze())
 			elseif (command == "deposit" and amount and privs.bank_admin) then
-				minetest.log("action", ("[Bank] %s depositing %d at %s"):format(name, amount, account))
+				economy.logAction("%s depositing %d at %s", name, amount, account)
 				return economy.feedbackTo(name, account:deposit(amount))
 			elseif (command == "withdraw" and amount and privs.bank_admin) then
-				minetest.log("action", ("[Bank] %s withdrawing %d from %s"):format(name, amount, account))
+				economy.logAction("%s withdrawing %d from %s", name, amount, account)
 				return economy.feedbackTo(name, account:withdraw(amount))
 			elseif (command == "set" and amount and privs.bank_admin) then
-				minetest.log("action", ("[Bank] %s setting %s to %d"):format(name, account, amount))
+				economy.logAction("%s setting %s to %d", name, account, amount)
 				return economy.feedbackTo(name, account:set(amount))
 			end
 		end
