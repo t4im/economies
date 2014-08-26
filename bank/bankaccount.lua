@@ -154,7 +154,7 @@ function economy.bank.importAccount(name)
 end
 
 function economy.bank.getAccount(name)
-	assert(name and name ~= "", "Eeek! Something tried to get no account.")
+	if not name or name == "" then error("You must not pass nil or the empty string to getAccount.", 2) end
 	local account = economy.bank.accounts[name]
 						or economy.bank.loadAccount(name)
 						or economy.bank.importAccount(name)
