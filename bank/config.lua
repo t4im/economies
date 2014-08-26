@@ -18,3 +18,8 @@ for k, v in pairs(defaults) do
 		economy.config:set(k, v)
 	end
 end
+
+economy.debug = conf_table["debug"] or minetest.setting_getbool("debug_mods")
+if economy.debug then
+	print("economy mod is in Debugmode")
+end
