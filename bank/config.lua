@@ -9,7 +9,8 @@ local defaults = {
 	currency_name = "credit",
 	bank_path = "/bank",
 	-- if set, load balance directly out of the file found via this configuration. Use %s for the playername
-	import_path = nil
+	import_path = nil,
+	max_journal_size = "5",
 }
 
 for k, v in pairs(defaults) do

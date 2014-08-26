@@ -15,6 +15,7 @@ dofile(economy.bank.modpath.."/notifications.lua")
 
 -- load classes and related api
 dofile(economy.bank.modpath.."/bankaccount.lua")
+dofile(economy.bank.modpath.."/journal.lua")
 dofile(economy.bank.modpath.."/transaction.lua")
 
 -- add operational code
