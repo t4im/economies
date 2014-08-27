@@ -63,7 +63,7 @@ function economy.realestate.landsale.punch(pos, node, puncher)
 	local transaction = economy.bank.Transaction:new{source=name, target=seller, amount=price, subject=subject, location=pos}
 
 	-- if transfer successfull (especially after balance check)
-	if economy.feedbackTo(name, transaction:checkAndCommit()) then
+	if economy.feedbackTo(name, transaction:commit()) then
 		economy.logAction("%s (%s->%s) for %d", subject, seller, name, price)
 		economy.realestate.transfer(pos, node, puncher)
 		minetest.remove_node(pos)

@@ -146,9 +146,3 @@ function economy.bank.Transaction:commit()
 
 	return from:save() and to:save()
 end
-
-function economy.bank.Transaction:checkAndCommit()
-	local good, feedback = self:check()
-	if not good then return false, feedback end
-	return self:commit()
-end

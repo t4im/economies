@@ -45,7 +45,7 @@ minetest.register_chatcommand("bankadmin", {
 						initiator=name,
 						source=accountName, target=target,
 						amount=transferAmount, subject=subject
-					}:checkAndCommit())
+					}:commit())
 				end
 			end
 
