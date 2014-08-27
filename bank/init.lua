@@ -20,6 +20,7 @@ dofile(economy.bank.modpath.."/transaction.lua")
 
 -- add operational code
 dofile(economy.bank.modpath.."/wiretransfer.lua")
+dofile(economy.bank.modpath.."/directdebit.lua")
 dofile(economy.bank.modpath.."/control.lua")
 
 -- craftitems
