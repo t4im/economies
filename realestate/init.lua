@@ -10,10 +10,12 @@ economy.realestate.modpath = minetest.get_modpath("realestate")
 dofile(economy.realestate.modpath.."/config.lua")
 
 -- anything related to selling land
-dofile(economy.realestate.modpath.."/landsale.lua")
-dofile(economy.realestate.modpath.."/forsale_signs.lua")
+if economy.with_protection then
+	dofile(economy.realestate.modpath.."/landsale.lua")
+	dofile(economy.realestate.modpath.."/forsale_signs.lua")
+end
 
 -- landrush support
-if minetest.get_modpath("landrush") then
-dofile(economy.realestate.modpath.."/landrush_landsale.lua")
+if economy.with_landrush then
+	dofile(economy.realestate.modpath.."/landrush_landsale.lua")
 end

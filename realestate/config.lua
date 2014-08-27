@@ -15,3 +15,7 @@ for k, v in pairs(defaults) do
 end
 
 economy.debug = conf_table["debug"] or minetest.setting_getbool("debug_mods")
+
+-- optional dependency support
+economy.with_landrush = minetest.get_modpath("landrush") ~= nil
+economy.with_protection = economy.with_landrush -- or..
