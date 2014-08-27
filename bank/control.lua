@@ -83,24 +83,6 @@ minetest.register_chatcommand("bankadmin", {
 	end,
 })
 
--- simple and direct wire command allowing to provide a subject
-minetest.register_chatcommand("wire", {
-	description = "wire transfer <amount> of money from <account> (optionally with subject).",
-	params = "<account> <amount> [<subject>]",
-	privs = {money=true},
-	func = function(name,  param)
-		local account, amount, subject = string.match(param, "([^ ]+) ([0-9]+) ?(.*)")
-		amount = tonumber(amount)
-
-		if (account and amount and subject) then
-			return economy.bank.wire(name, account, amount, subject)
-		end
-
-		minetest.chat_send_player(name, "Usage: <account> <amount> [<subject>])")
-		return false
-    end,
-})
-
 -- since several other economic mods use this command in this form, we want to support it for the users as well
 -- however administrative functions remain handled extra,
 -- which adds an additional layer of security against accidents by admins

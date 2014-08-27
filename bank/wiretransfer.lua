@@ -64,3 +64,21 @@ function economy.bank.openWireFormspec(player)
 		"button_exit[8,6;1.5,0.75;logout;Logout]"
 	minetest.show_formspec(playername, "bank:wire_formspec", formspec)
 end
+
+-- simple and direct wire command allowing to provide a subject
+minetest.register_chatcommand("wire", {
+	description = "wire transfer <amount> of money from <account> (optionally with subject).",
+	params = "<account> <amount> [<subject>]",
+	privs = {money=true},
+	func = function(name,  param)
+		local account, amount, subject = string.match(param, "([^ ]+) ([0-9]+) ?(.*)")
+		amount = tonumber(amount)
+
+		if (account and amount and subject) then
+			return economy.bank.wire(name, account, amount, subject)
+		end
+
+		minetest.chat_send_player(name, "Usage: <account> <amount> [<subject>])")
+		return false
+    end,
+})
