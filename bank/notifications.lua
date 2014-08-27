@@ -1,3 +1,5 @@
+economy = economy or {}
+
 --
 -- Player notification
 --
