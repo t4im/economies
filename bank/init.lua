@@ -22,5 +22,8 @@ dofile(economy.bank.modpath.."/transaction.lua")
 dofile(economy.bank.modpath.."/wiretransfer.lua")
 dofile(economy.bank.modpath.."/control.lua")
 
+-- craftitems
+--dofile(economy.bank.modpath.."/cards.lua")
+
 -- extra nodes
 dofile(economy.bank.modpath.."/atm.lua")
