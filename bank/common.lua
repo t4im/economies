@@ -12,9 +12,6 @@ function economy.sanitizeAmount(amount)
 	-- make sure no one tries to set Pi amount of credits, or similar annoyances
 	amount = math.ceil(amount)
 
-	-- ignore any neutral operations
-	if(amount == 0) then return nil, "Successfully done nothing" end
-
 	-- we generally don't allow operations on negative values
 	if(amount < 0) then
 		return nil, "You must not pass a negative amount."
