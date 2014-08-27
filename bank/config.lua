@@ -21,7 +21,7 @@ for k, v in pairs(defaults) do
 	if conf_table[k] == nil then economy.config:set(k, v) end
 end
 
-economy.debug = conf_table["debug"] or minetest.setting_getbool("debug_mods")
+economy.debugging = conf_table["debug"] or minetest.setting_getbool("debug_mods")
 
 -- optional dependency support
 economy.with_plastic = minetest.get_modpath("homedecore") ~= nil

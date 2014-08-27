@@ -40,7 +40,7 @@ function economy.logAction(message, ...)
 	end
 	minetest.log("action", logPrefix .. message)
 end
-function economy.debug(message, ...)
+function economy.logDebug(message, ...)
 	if arg.n > 0 then
 		message = message:format(unpack(arg))
 	end

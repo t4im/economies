@@ -95,7 +95,7 @@ end
 
 function economy.bank.Account:save()
 	local path = accountFile(self.name)
-	economy.debug("saving account %s to %s ", self.name, path)
+	economy.logDebug("saving account %s to %s ", self.name, path)
 	
 	local output = io.open(path, "w")
 	-- remove transient flag direclty before serializing
@@ -119,7 +119,7 @@ end
 
 function economy.bank.createAccount(name)
 	local initialAmount = math.floor(economy.config:get("initial_amount"))
-	economy.debug("creating account %s with %s", name, economy.formatMoney(initialAmount))
+	economy.logDebug("creating account %s with %s", name, economy.formatMoney(initialAmount))
 	return economy.bank.Account:new{name=name, balance=initialAmount, transient=true}
 end
 
@@ -129,7 +129,7 @@ function economy.bank.loadAccount(name)
 	local input = io.open(path, "r")
 	if(not input) then return nil end
 
-	economy.debug("loading account %s from %s", name, path)
+	economy.logDebug("loading account %s from %s", name, path)
 	local account = minetest.deserialize(input:read("*all"))
 	io.close(input)
 
