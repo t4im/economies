@@ -15,6 +15,7 @@ economy.bank = economy.bank or {}
 
 -- used for notifications of malicious behavior
 function economy.bank.isSupervisor(player)
+	local name = player:get_player_name()
 	local privs = minetest.get_player_privs(name)
 	return privs.ban or privs.bank_teller
 end
