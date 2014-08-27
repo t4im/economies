@@ -17,7 +17,9 @@ function economy.realestate.landsale.receive_fields(pos, formname, fields, sende
 	end
 
 	local price = economy.feedbackTo(name, economy.sanitizeAmount(fields.price))
-	if not price then return end
+	-- ignore insane or 0 prices to avoid sales on missconfigurations
+	-- in case of land give-aways, a symbolic price of 1 is quite common in accounting anyway
+	if not price or price == 0 then return end
 
 	local account = economy.bank.getAccount(name)
 	if account.frozen then
