@@ -3,6 +3,22 @@ minetest.register_craftitem("bank:plastic_card", {
 	inventory_image = "bank_plastic_card.png",
 })
 
+if economy.with_compressor and economy.with_plastic and technic then
+	technic.register_compressor_recipe({
+		input = {"homedecor:plastic_sheeting 6"},
+		output = "bank:plastic_card"
+	})
+elseif economy.with_plastic then
+	minetest.register_craft({
+		type = "shapeless",
+		output = "bank:plastic_card",
+		recipe = {
+			"homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting",
+			"homedecor:plastic_sheeting", "homedecor:plastic_sheeting"
+			}
+	})
+end
+
 minetest.register_craftitem("bank:smart_card_chip", {
 	description = "Smart card chip",
 	inventory_image = "bank_smart_card_chip.png",

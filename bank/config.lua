@@ -22,3 +22,8 @@ for k, v in pairs(defaults) do
 end
 
 economy.debug = conf_table["debug"] or minetest.setting_getbool("debug_mods")
+
+-- optional dependency support
+economy.with_plastic = minetest.get_modpath("homedecore") ~= nil
+			or minetest.get_modpath("pipeworks") ~= nil -- defines plastic if homedecore is not available
+economy.with_compressor = minetest.get_modpath("technic") ~= nil
