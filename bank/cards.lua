@@ -15,10 +15,8 @@ minetest.register_craftitem("bank:smart_card", {
 
 minetest.register_craft({
 	type = "shapeless",
-	output = 'bank:smart_card',
-	recipe = {
-		{'bank:smart_card_chip', 'bank:plastic_card'},
-	}
+	output = "bank:smart_card",
+	recipe = { "bank:smart_card_chip", "bank:plastic_card"}
 })
 
 minetest.register_craftitem("bank:debit_card", {
