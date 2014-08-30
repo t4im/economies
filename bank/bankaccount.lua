@@ -11,6 +11,8 @@ economy.bank.Account = {
 	balance = 0,
 	-- reason of freezing or nil if not frozen
 	frozen = nil,
+	-- time of account creation (or import)
+	created = nil,
 	transient = nil,
 }
 
@@ -128,7 +130,7 @@ assert(economy.bank.initBankPath(), "Could not access the account location. Make
 function economy.bank.createAccount(name)
 	local initialAmount = math.floor(economy.config:get("initial_amount"))
 	economy.logDebug("creating account %s with %s", name, economy.formatMoney(initialAmount))
-	return economy.bank.Account:new{name=name, balance=initialAmount, transient=true}
+	return economy.bank.Account:new{name=name, balance=initialAmount, created=os.time(), transient=true, }
 end
 
 function economy.bank.loadAccount(name)
@@ -158,7 +160,7 @@ function economy.bank.importAccount(name)
 	io.close(output)
 
 	minetest.log("info", string.format("[Bank] imported account %s with %s", name, economy.formatMoney(balance)))
-	return economy.bank.Account:new{name=name, balance=balance, transient=true}
+	return economy.bank.Account:new{name=name, balance=balance, created=os.time(), transient=true, }
 end
 
 function economy.bank.getAccount(name)
