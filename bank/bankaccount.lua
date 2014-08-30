@@ -113,9 +113,17 @@ end
 -- ==================
 economy.bank.accounts = economy.bank.accounts or {}
 
-local accountFile = function(name)
-	return minetest.get_worldpath() .. economy.config:get("bank_path") .. "/" .. name .. ".txt"
+local bankPath = minetest.get_worldpath() .. economy.config:get("bank_path") .. "/"
+local accountFile = function(name) return bankPath .. name .. ".account" end
+
+-- initial run to load indexed information and check our bank path exists at all during startup
+function economy.bank.initBankPath()
+	local input = io.open(bankPath .. ".index", "w")
+	if(not input) then return false end
+	io.close(input)
+	return true
 end
+assert(economy.bank.initBankPath(), "Could not access the account location. Make sure you created the directory " .. bankPath)
 
 function economy.bank.createAccount(name)
 	local initialAmount = math.floor(economy.config:get("initial_amount"))
