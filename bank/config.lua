@@ -8,8 +8,12 @@ local defaults = {
 	currency_format = "%dcr",
 	currency_name = "credit",
 	bank_path = "/bank",
-	-- if set, load balance directly out of the file found via this configuration. Use %s for the playername
+	-- formatstring. If set, load balance out of the file found via this configuration.
+	-- path is expected relative to the world path
+	-- Use %s for the playername.
 	import_path = nil,
+	-- the format to import from: 'nif' (number-in-file), 'bigtable'
+	import_type = nil,
 	max_journal_size = "5",
 }
 

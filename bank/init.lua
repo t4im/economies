@@ -18,6 +18,8 @@ dofile(economy.bank.modpath.."/bankaccount.lua")
 dofile(economy.bank.modpath.."/journal.lua")
 dofile(economy.bank.modpath.."/transaction.lua")
 
+dofile(economy.bank.modpath.."/imports.lua")
+
 -- add operational code
 dofile(economy.bank.modpath.."/wiretransfer.lua")
 dofile(economy.bank.modpath.."/directdebit.lua")
