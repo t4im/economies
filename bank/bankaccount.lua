@@ -149,20 +149,6 @@ function economy.bank.loadAccount(name)
 	return account
 end
 
--- imports simple "number in file" accounts from other mods
-function economy.bank.importAccount(name)
-	local import_path = economy.config:get("import_path")
-	if not import_path then return false end
-
-	local input = io.open(minetest.get_worldpath() .. import_path:format(name) , "r")
-	if not input then return false end
-	local balance = input:read("*n")
-	io.close(output)
-
-	minetest.log("info", string.format("[Bank] imported account %s with %s", name, economy.formatMoney(balance)))
-	return economy.bank.Account:new{name=name, balance=balance, created=os.time(), transient=true, }
-end
-
 function economy.bank.getAccount(name)
 	if not name or name == "" then error("You must not pass nil or the empty string to getAccount.", 2) end
 	local account = economy.bank.accounts[name]
