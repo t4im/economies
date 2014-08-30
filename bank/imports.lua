@@ -1,9 +1,10 @@
+local worldpath = minetest.get_worldpath() .. "/"
 local import_path = economy.config:get("import_path")
 local import_type = economy.config:get("import_type")
 
 -- imports simple "number in file" accounts as used by a handfull of other economic mods
 local function importNIFAccount(name)
-	local input = io.open(minetest.get_worldpath() .. import_path:format(name) , "r")
+	local input = io.open(worldpath .. import_path:format(name) , "r")
 	if not input then return false end
 	local balance = input:read("*n")
 	io.close(output)
@@ -31,7 +32,7 @@ end
 
 -- imports accounts serialized into one big table
 local function importBigTableAccount(name)
-	local input = io.open(minetest.get_worldpath() .. import_path , "r")
+	local input = io.open(worldpath .. import_path , "r")
 	if not input then return false end
 	local accounts =  minetest.deserialize(input:read("*all"))
 	io.close(output)
@@ -40,7 +41,7 @@ end
 
 -- imports accounts serialized into one table per account
 local function importBigTableAccount(name)
-	local input = io.open(minetest.get_worldpath() .. import_path:format(name) , "r")
+	local input = io.open(worldpath .. import_path:format(name) , "r")
 	if not input then return false end
 	local accountTable =  minetest.deserialize(input:read("*all"))
 	io.close(output)
