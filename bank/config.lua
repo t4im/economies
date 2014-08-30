@@ -12,7 +12,10 @@ local defaults = {
 	-- path is expected relative to the world path
 	-- Use %s for the playername.
 	import_path = nil,
-	-- the format to import from: 'nif' (number-in-file), 'bigtable'
+	-- the format to import from:
+	-- 'nif' (number-in-file) for accounts stored in one file per account with just a number in it
+	-- 'table' for accounts stored in one table in a file per account
+	-- 'bigtable' for accounts stored in one big table, containing all accounts
 	import_type = nil,
 	max_journal_size = "5",
 }

@@ -38,6 +38,15 @@ local function importBigTableAccount(name)
 	return importAccountTableEntry(name, accounts[name])
 end
 
+-- imports accounts serialized into one table per account
+local function importBigTableAccount(name)
+	local input = io.open(minetest.get_worldpath() .. import_path:format(name) , "r")
+	if not input then return false end
+	local accountTable =  minetest.deserialize(input:read("*all"))
+	io.close(output)
+	return importAccountTableEntry(name, accountTable)
+end
+
 function economy.bank.importAccount(name)
 	if not import_path or not import_type then
 		return nil
