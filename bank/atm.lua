@@ -25,7 +25,7 @@ minetest.register_node("bank:atm_bottom", {
 		"bank_atm_texture.png",
 		"bank_atm_texture.png",
 		},
-	-- inventory_image = "",
+	inventory_image = "bank_atm_inventory.png",
 	description = "ATM",
 	drawtype = "nodebox",
 	paramtype = "light",
