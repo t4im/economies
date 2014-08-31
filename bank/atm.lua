@@ -9,22 +9,22 @@ local atm_model_bottom = {
 local atm_model_top = {
 	type = "fixed",
 	fixed = {
-		{-0.375, 0.3125, -0.1875, 0.1875, 0.5, 0}, -- ceiling
+		{-0.375, 0.3125, -0.1875, 4/16, 0.5, 0}, -- ceiling
 		{-0.5, -0.5, -0.25, -0.375, 0.5, 0.5}, -- leftwall
-		{0.1875, -0.5, -0.25, 0.5, 0.5, 0.5}, -- rightwall
-		{-0.375, -0.5, 0, 0.1875, 0.5, 0.5}, -- base
+		{4/16, -0.5, -0.25, 0.5, 0.5, 0.5}, -- rightwall
+		{-0.375, -0.5, 0, 4/16, 0.5, 0.5}, -- base
 	}
 }
 
 minetest.register_node("bank:atm_bottom", {
 	tiles = {
-		"default_steel_block.png",
-		"default_steel_block.png",
-		"default_steel_block.png",
-		"default_steel_block.png",
-		"default_steel_block.png",
-		"default_steel_block.png"
-	},
+		"bank_atm_entry.png",
+		"bank_atm_texture.png",
+		"bank_atm_texture.png",
+		"bank_atm_texture.png",
+		"bank_atm_texture.png",
+		"bank_atm_texture.png",
+		},
 	-- inventory_image = "",
 	description = "ATM",
 	drawtype = "nodebox",
@@ -66,12 +66,12 @@ minetest.register_node("bank:atm_bottom", {
 
 minetest.register_node("bank:atm_top", {
 	tiles = {
-		"default_steel_block.png", -- top
-		"default_steel_block.png",
-		"default_steel_block.png", -- side
-		"default_steel_block.png^[transformFX", -- side
-		"default_steel_block.png", -- back
-		"default_steel_block.png" -- back
+		"bank_atm_texture.png",
+		"bank_atm_texture.png",
+		"bank_atm_texture.png",
+		"bank_atm_texture.png",
+		"bank_atm_texture.png",
+		"bank_atm_top_front.png",
 	},
 	drawtype = "nodebox",
 	paramtype = "light",
