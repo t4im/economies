@@ -1,13 +1,13 @@
-economy = economy or {}
-economy.bank = economy.bank or {}
-economy.realestate = economy.realestate or {}
-economy.realestate.landsale = economy.realestate.landsale or {}
+economies = economies or {}
+economies.bank = economies.bank or {}
+economies.realestate = economies.realestate or {}
+economies.realestate.landsale = economies.realestate.landsale or {}
 
 -- this function is expected to be implemented by protection mods
 -- return true on success or false with an optional error message
--- economy.realestate.transfer = function(pos, node, puncher)
+-- economies.realestate.transfer = function(pos, node, puncher)
 
-function economy.realestate.landsale.receive_fields(pos, formname, fields, sender)
+function economies.realestate.landsale.receive_fields(pos, formname, fields, sender)
 	local name = sender:get_player_name()
 	if not fields.setup then return end
 
@@ -16,12 +16,12 @@ function economy.realestate.landsale.receive_fields(pos, formname, fields, sende
 		return
 	end
 
-	local price = economy.feedbackTo(name, economy.sanitizeAmount(fields.price))
+	local price = economies.feedbackTo(name, economies.sanitizeAmount(fields.price))
 	-- ignore insane or 0 prices to avoid sales on missconfigurations
 	-- in case of land give-aways, a symbolic price of 1 is quite common in accounting anyway
 	if not price or price == 0 then return end
 
-	local account = economy.bank.getAccount(name)
+	local account = economies.bank.getAccount(name)
 	if account.frozen then
 		minetest.chat_send_player(name, "Your account is frozen. You may not sell any land at this time.")
 		return
@@ -34,15 +34,15 @@ function economy.realestate.landsale.receive_fields(pos, formname, fields, sende
 	meta:set_string("description", fields.description)
 end
 
-function economy.realestate.landsale.punch(pos, node, puncher)
+function economies.realestate.landsale.punch(pos, node, puncher)
 	local name = puncher:get_player_name()
-	if not minetest.is_protected(pos, name) or not economy.realestate.transfer then
+	if not minetest.is_protected(pos, name) or not economies.realestate.transfer then
 		-- either has the owner just punched his own salesblock
 		-- or the land is unowned/unprotected anyway
 		return;
 	end
 
-	local buyerAccount = economy.bank.getAccount(name)
+	local buyerAccount = economies.bank.getAccount(name)
 	if buyerAccount.frozen then
 		minetest.chat_send_player(name, "Your account is frozen. You may not sell any land at this time.")
 		return
@@ -50,7 +50,7 @@ function economy.realestate.landsale.punch(pos, node, puncher)
 
 	local meta = minetest.get_meta(pos)
 	local seller = meta:get_string("seller")
-	local targetAccount = economy.bank.getAccount(seller)
+	local targetAccount = economies.bank.getAccount(seller)
 	if targetAccount.frozen then
 		minetest.chat_send_player(name, "The seller account is frozen. You may not buy this land at this time.")
 		return
@@ -60,18 +60,18 @@ function economy.realestate.landsale.punch(pos, node, puncher)
 	local landname = meta:get_string("name")
 	local subject = string.format("Landsale at %s %s", minetest.pos_to_string(pos), landname or "")
 
-	local transaction = economy.bank.Transaction:new{source=name, target=seller, amount=price, subject=subject, location=pos}
+	local transaction = economies.bank.Transaction:new{source=name, target=seller, amount=price, subject=subject, location=pos}
 
 	-- if transfer successfull (especially after balance check)
-	if economy.feedbackTo(name, transaction:commit()) then
-		economy.logAction("%s (%s->%s) for %d", subject, seller, name, price)
-		economy.realestate.transfer(pos, node, puncher)
+	if economies.feedbackTo(name, transaction:commit()) then
+		economies.logAction("%s (%s->%s) for %d", subject, seller, name, price)
+		economies.realestate.transfer(pos, node, puncher)
 		minetest.remove_node(pos)
 		minetest.chat_send_player(puncher:get_player_name(), "Congratulations! This land is now yours.")
 	end
 end
 
-function economy.realestate.landsale.construct(pos)
+function economies.realestate.landsale.construct(pos)
 	local meta = minetest.get_meta(pos)
 	meta:set_string("infotext", "Soon for sale!")
 	meta:set_string("formspec", "size[5,4]" ..

@@ -4,14 +4,14 @@
 -- call the functions that make the landselling happen
 -- not mixing these with the forsale signs allows us to
 -- add other nodes, for example aliased ones from protectionmods
-local forsale_receive_fields = economy.realestate.landsale.receive_fields
-local forsale_punch = economy.realestate.landsale.punch
-local forsale_construct = economy.realestate.landsale.construct
+local forsale_receive_fields = economies.realestate.landsale.receive_fields
+local forsale_punch = economies.realestate.landsale.punch
+local forsale_construct = economies.realestate.landsale.construct
 
 local determine_sign_type = function(itemstack, placer, pointed_thing)
 	local name = minetest.get_node(pointed_thing.above).name
 
-	if not economy.buildableTo(pointed_thing.above, placer, reportViolation) then
+	if not economies.buildableTo(pointed_thing.above, placer, reportViolation) then
 		return itemstack
 	end
 

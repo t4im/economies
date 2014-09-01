@@ -1,5 +1,5 @@
-economy = economy or {}
-economy.bank = economy.bank or {}
+economies = economies or {}
+economies.bank = economies.bank or {}
 
 -- while this might not be abused to steal money,
 -- it might very well be used to spam other players with debit requests
@@ -9,8 +9,8 @@ minetest.register_privilege("debit", {
 	give_to_singleplayer = false,
 })
 
-function economy.bank.debit(from, to, amount, subject)
-	local transaction = economy.bank.Transaction:new{initiator=to, source=from, target=to, amount=amount, subject=subject}
+function economies.bank.debit(from, to, amount, subject)
+	local transaction = economies.bank.Transaction:new{initiator=to, source=from, target=to, amount=amount, subject=subject}
 
 	local good, feedback = transaction:check()
 	if not good then
@@ -31,12 +31,12 @@ function economy.bank.debit(from, to, amount, subject)
 	-- if both players are from the same ip it might be a possible cheating attempt
 	-- since we only accept transfers to online players, this is bound to be noticed
 	if minetest.get_player_ip(from) == minetest.get_player_ip(to) then
-		sourceAccount:freeze(string.format("direct debit attempt of %s from %s, having the same ip address", economy.formatMoney(amount), from))
-		targetAccount:freeze(string.format("target of an direct debit attempt of %s to %s, having the same ip address", economy.formatMoney(amount), to))
+		sourceAccount:freeze(string.format("direct debit attempt of %s from %s, having the same ip address", economies.formatMoney(amount), from))
+		targetAccount:freeze(string.format("target of an direct debit attempt of %s to %s, having the same ip address", economies.formatMoney(amount), to))
 
-		economy.notifyAny(economy.bank.isSupervisor,
+		economies.notifyAny(economies.bank.isSupervisor,
 			"%s tried a direct debit of %s from %s. Both clients are connected from the same IP address. The Accounts were preventively frozen.",
-			to, economy.formatMoney(amount), from
+			to, economies.formatMoney(amount), from
 		)
 		minetest.chat_send_player(to,
 			"You tried to debit money from an account that originates from the same network as you.\n" ..
@@ -45,7 +45,7 @@ function economy.bank.debit(from, to, amount, subject)
 		return false
 	end
 
-	economy.bank.openDebitFormspec(transaction)
+	economies.bank.openDebitFormspec(transaction)
 	return true
 end
 
@@ -60,7 +60,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 
 	if fields.accept then
 		transaction.amount = fields.amount
-		if not economy.feedbackTo(playername, transaction:commit()) then
+		if not economies.feedbackTo(playername, transaction:commit()) then
 			minetest.chat_send_player(transaction.target, "Your direct debit was aborted due to debitor errors.")
 		end
 	else
@@ -68,7 +68,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	end
 end)
 
-function economy.bank.openDebitFormspec(transaction)
+function economies.bank.openDebitFormspec(transaction)
 	local playername = transaction.source
 	local greeting = ("Hello %s. Your balance is %s\n%s asks you for a payment of %s.")
 			:format(playername, transaction:from():printBalance(), transaction.target, transaction:printAmount())
@@ -97,7 +97,7 @@ minetest.register_chatcommand("debit", {
 		amount = tonumber(amount)
 
 		if (account and amount and subject) then
-			return economy.bank.debit(account, name, amount, subject)
+			return economies.bank.debit(account, name, amount, subject)
 		end
 
 		minetest.chat_send_player(name, "Usage: <account> <amount> <subject>")

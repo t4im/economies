@@ -1,9 +1,9 @@
-economy = economy or {}
+economies = economies or {}
 
 --
 -- Player notification
 --
-function economy.notify(player, message, ...)
+function economies.notify(player, message, ...)
 	local name = player:get_player_name()
 	if arg.n > 0
 		then message = message:format(unpack(arg))
@@ -11,20 +11,20 @@ function economy.notify(player, message, ...)
 	minetest.chat_send_player(name, message)
 end
 
-function economy.notifyAll(message, ...)
+function economies.notifyAll(message, ...)
 	if arg.n > 0 then
 		message = message:format(unpack(arg))
 	end
 	minetest.chat_send_all(message)
 end
 
-function economy.notifyAny(condition, message, ...)
+function economies.notifyAny(condition, message, ...)
 	if arg.n > 0 then
 		message = message:format(unpack(arg))
 	end
 	for _,player in ipairs(minetest.get_connected_players()) do
 		if condition(player) then
-			economy.notify(player, message)
+			economies.notify(player, message)
 		end
 	end
 end
@@ -34,13 +34,13 @@ end
 --
 
 local logPrefix = ("[%s] "):format(minetest.get_current_modname())
-function economy.logAction(message, ...)
+function economies.logAction(message, ...)
 	if arg.n > 0 then
 		message = message:format(unpack(arg))
 	end
 	minetest.log("action", logPrefix .. message)
 end
-function economy.logDebug(message, ...)
+function economies.logDebug(message, ...)
 	if arg.n > 0 then
 		message = message:format(unpack(arg))
 	end

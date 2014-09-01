@@ -1,7 +1,7 @@
 --
 -- configuration handling
 --
--- use economy.conf in your worldpath to change any settings listed as defaults here
+-- use economies.conf in your worldpath to change any settings listed as defaults here
 --
 local defaults = {
 	initial_amount = "0",
@@ -21,16 +21,16 @@ local defaults = {
 }
 
 -- configuration slurping
-economy.config = economy.config or Settings(minetest.get_worldpath().."/economy.conf")
-local conf_table = economy.config:to_table()
+economies.config = economies.config or Settings(minetest.get_worldpath().."/economies.conf")
+local conf_table = economies.config:to_table()
 
 for k, v in pairs(defaults) do
-	if conf_table[k] == nil then economy.config:set(k, v) end
+	if conf_table[k] == nil then economies.config:set(k, v) end
 end
 
-economy.debugging = conf_table["debug"] or minetest.setting_getbool("debug_mods")
+economies.debugging = conf_table["debug"] or minetest.setting_getbool("debug_mods")
 
 -- optional dependency support
-economy.with_plastic = minetest.get_modpath("homedecore") ~= nil
+economies.with_plastic = minetest.get_modpath("homedecore") ~= nil
 			or minetest.get_modpath("pipeworks") ~= nil -- defines plastic if homedecore is not available
-economy.with_compressor = minetest.get_modpath("technic") ~= nil
+economies.with_compressor = minetest.get_modpath("technic") ~= nil

@@ -1,5 +1,5 @@
-local previousTransfer = economy.realestate.transfer
-economy.realestate.transfer = function(pos, node, puncher)
+local previousTransfer = economies.realestate.transfer
+economies.realestate.transfer = function(pos, node, puncher)
 	local name = puncher:get_player_name()
 	local chunk = landrush.get_chunk(pos)
 	landrush.claims[chunk] = {owner=name, shared={}, claimtype='landclaim'}

@@ -1,11 +1,11 @@
-economy = economy or {}
-economy.bank = economy.bank or {}
+economies = economies or {}
+economies.bank = economies.bank or {}
 
 -- =================
--- economy.bank.Transaction class
+-- economies.bank.Transaction class
 -- =================
 
-economy.bank.Transaction = {
+economies.bank.Transaction = {
 	time = nil,
 	subject = nil,
 	location = nil,
@@ -16,7 +16,7 @@ economy.bank.Transaction = {
 	initiator = nil
 }
 
-function economy.bank.Transaction:new(object)
+function economies.bank.Transaction:new(object)
 	object = object or {}
 	setmetatable(object, self)
 	self.__index = self
@@ -27,20 +27,20 @@ function economy.bank.Transaction:new(object)
 	return object
 end
 
-function economy.bank.Transaction:printDate(format) return os.date(format or "%Y-%m-%d %H:%M:%S", self.time) end
-function economy.bank.Transaction:printAmount() return economy.formatMoney(self.amount) end
+function economies.bank.Transaction:printDate(format) return os.date(format or "%Y-%m-%d %H:%M:%S", self.time) end
+function economies.bank.Transaction:printAmount() return economies.formatMoney(self.amount) end
 
-function economy.bank.Transaction:from() return economy.bank.getAccount(self.source) end
-function economy.bank.Transaction:to() return economy.bank.getAccount(self.target) end
+function economies.bank.Transaction:from() return economies.bank.getAccount(self.source) end
+function economies.bank.Transaction:to() return economies.bank.getAccount(self.target) end
 
 -- a different question as to from whome the transaction debits is:
 -- who initated the transaction? might have been some admin enforcing it, or some process/mod/machine
 -- if nil, the initiator is assumed to be the source
-function economy.bank.Transaction:initiator() return self.initiator or self.source end
+function economies.bank.Transaction:initiator() return self.initiator or self.source end
 
-function economy.bank.Transaction:describe() return ("%s transfers %d (%s -> %s) %s"):format(self.initiator or "player", self.amount, self.source, self.target, self.subject or "-") end
+function economies.bank.Transaction:describe() return ("%s transfers %d (%s -> %s) %s"):format(self.initiator or "player", self.amount, self.source, self.target, self.subject or "-") end
 
-function economy.bank.Transaction:type()
+function economies.bank.Transaction:type()
 	if type then
 		return type
 	elseif not self.initiator or self.initiator == self.source then
@@ -58,7 +58,7 @@ function economy.bank.Transaction:type()
 	return "unknown"
 end
 
-function economy.bank.Transaction:isPointless()
+function economies.bank.Transaction:isPointless()
 	if	-- transferring from noone
 		not self.source or self.source == ""
 		-- or transferring to noone
@@ -75,12 +75,12 @@ function economy.bank.Transaction:isPointless()
 	return false
 end
 
-function economy.bank.Transaction:isValid()
+function economies.bank.Transaction:isValid()
 	local from, to = self:from(), self:to()
 	if not from:exists() then return false, "source: neither account nor player exist" end
 	if not to:exists() then return false, "target: neither account nor player exist" end
 
-	local saneAmount, feedback = economy.sanitizeAmount(self.amount)
+	local saneAmount, feedback = economies.sanitizeAmount(self.amount)
 	if not saneAmount then return false, feedback end
 
 	self.amount = saneAmount
@@ -91,7 +91,7 @@ function economy.bank.Transaction:isValid()
 	return true
 end
 
-function economy.bank.Transaction:isLegit()
+function economies.bank.Transaction:isLegit()
 	local from, to = self:from(), self:to()
 
 	if self:type() == "admin" then
@@ -109,7 +109,7 @@ function economy.bank.Transaction:isLegit()
 	return true
 end
 
-function economy.bank.Transaction:check()
+function economies.bank.Transaction:check()
 	local pointless, feedback = self:isPointless()
 	if pointless then return false, feedback end
 
@@ -122,7 +122,7 @@ function economy.bank.Transaction:check()
 	return true
 end
 
-function economy.bank.Transaction:commit()
+function economies.bank.Transaction:commit()
 	local good, feedback = self:check()
 	if not good then
 		return false, feedback
@@ -131,12 +131,12 @@ function economy.bank.Transaction:commit()
 	local from, to  = self:from(), self:to()
 	local fromOwner, toOwner = from:getOwner(), to:getOwner()
 
-	economy.logAction(self:describe())
+	economies.logAction(self:describe())
 
 	from.balance = from.balance - self.amount
 	to.balance = to.balance + self.amount
 
-	local amountString = economy.formatMoney(self.amount)
+	local amountString = economies.formatMoney(self.amount)
 	local transactionType = self:type()
 	minetest.chat_send_player(fromOwner, string.format("You paid %s to %s via %s transfer", amountString, toOwner, transactionType))
 	minetest.chat_send_player(toOwner, string.format("%s paid you %s via %s transfer", fromOwner, amountString, transactionType))

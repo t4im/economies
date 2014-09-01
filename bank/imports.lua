@@ -1,6 +1,6 @@
 local worldpath = minetest.get_worldpath() .. "/"
-local import_path = economy.config:get("import_path")
-local import_type = economy.config:get("import_type")
+local import_path = economies.config:get("import_path")
+local import_type = economies.config:get("import_type")
 
 -- imports simple "number in file" accounts as used by a handfull of other economic mods
 local function importNIFAccount(name)
@@ -8,7 +8,7 @@ local function importNIFAccount(name)
 	if not input then return false end
 	local balance = input:read("*n")
 	io.close(output)
-	return economy.bank.Account:new{name=name, balance=balance, created=os.time(), transient=true, }
+	return economies.bank.Account:new{name=name, balance=balance, created=os.time(), transient=true, }
 end
 
 -- imports from a passed table by common used table field names
@@ -27,7 +27,7 @@ local function importAccountTableEntry(name, entry)
 		return nil
 	end
 
-	return economy.bank.Account:new{name=name, balance=balance, created=os.time(), transient=true, frozen=frozen,}
+	return economies.bank.Account:new{name=name, balance=balance, created=os.time(), transient=true, frozen=frozen,}
 end
 
 -- imports accounts serialized into one big table
@@ -48,7 +48,7 @@ local function importBigTableAccount(name)
 	return importAccountTableEntry(name, accountTable)
 end
 
-function economy.bank.importAccount(name)
+function economies.bank.importAccount(name)
 	if not import_path or not import_type then
 		return nil
 	end
@@ -60,7 +60,7 @@ function economy.bank.importAccount(name)
 	end
 
 	if account then		
-		minetest.log("info", string.format("[Bank] imported account %s with %s", name, economy.formatMoney(balance)))
+		minetest.log("info", string.format("[Bank] imported account %s with %s", name, economies.formatMoney(balance)))
 		return account
 	end
 	return nil

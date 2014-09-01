@@ -1,8 +1,8 @@
-economy = economy or {}
-economy.bank = economy.bank or {}
+economies = economies or {}
+economies.bank = economies.bank or {}
 
-function economy.bank.wire(from, to, amount, subject)
-	local transaction = economy.bank.Transaction:new{source=from, target=to, amount=amount, subject=subject}
+function economies.bank.wire(from, to, amount, subject)
+	local transaction = economies.bank.Transaction:new{source=from, target=to, amount=amount, subject=subject}
 
 	local good, feedback = transaction:check()
 	if not good then
@@ -23,12 +23,12 @@ function economy.bank.wire(from, to, amount, subject)
 	-- if both players are from the same ip it might be a possible cheating attempt
 	-- since we only accept transfers to online players, this is bound to be noticed
 	if minetest.get_player_ip(from) == minetest.get_player_ip(to) then
-		sourceAccount:freeze(string.format("attempt to transfer %s to %s, having the same ip address", economy.formatMoney(amount), to))
-		targetAccount:freeze(string.format("target of an attempt to transfer %s from %s, having the same ip address", economy.formatMoney(amount), from))
+		sourceAccount:freeze(string.format("attempt to transfer %s to %s, having the same ip address", economies.formatMoney(amount), to))
+		targetAccount:freeze(string.format("target of an attempt to transfer %s from %s, having the same ip address", economies.formatMoney(amount), from))
 
-		economy.notifyAny(economy.bank.isSupervisor,
+		economies.notifyAny(economies.bank.isSupervisor,
 			"%s tried to transfer %s to %s. Both clients are connected from the same IP address. The Accounts were preventively frozen.",
-			from, economy.formatMoney(amount), to
+			from, economies.formatMoney(amount), to
 		)
 		minetest.chat_send_player(from,
 			"You tried to transfer money to an account that originates from the same network as you.\n" ..
@@ -44,13 +44,13 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	if formname ~= "bank:wire_formspec" then return end
 
 	if fields.transfer then
-		economy.bank.wire(player:get_player_name(), fields.to, fields.amount, fields.subject)
+		economies.bank.wire(player:get_player_name(), fields.to, fields.amount, fields.subject)
 	end
 end)
 
-function economy.bank.openWireFormspec(player)
+function economies.bank.openWireFormspec(player)
 	local playername = player:get_player_name()
-	local account = economy.bank.getAccount(playername)
+	local account = economies.bank.getAccount(playername)
 	local formspec = "size[10,7]"..
 		"label[0.75,0.75; Welcome " .. playername .. "]" ..
 		"label[5,0.75;" ..
@@ -75,7 +75,7 @@ minetest.register_chatcommand("wire", {
 		amount = tonumber(amount)
 
 		if (account and amount and subject) then
-			return economy.bank.wire(name, account, amount, subject)
+			return economies.bank.wire(name, account, amount, subject)
 		end
 
 		minetest.chat_send_player(name, "Usage: <account> <amount> [<subject>])")

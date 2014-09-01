@@ -3,12 +3,12 @@ minetest.register_craftitem("bank:plastic_card", {
 	inventory_image = "bank_plastic_card.png",
 })
 
-if economy.with_compressor and economy.with_plastic and technic then
+if economies.with_compressor and economies.with_plastic and technic then
 	technic.register_compressor_recipe({
 		input = {"homedecor:plastic_sheeting 6"},
 		output = "bank:plastic_card"
 	})
-elseif economy.with_plastic then
+elseif economies.with_plastic then
 	minetest.register_craft({
 		type = "shapeless",
 		output = "bank:plastic_card",

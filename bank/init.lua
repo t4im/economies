@@ -2,31 +2,31 @@
 -- Banking accounts for players
 -- allows storing and transferring funds between players
 --
-economy = economy or {}
-economy.bank = economy.bank or {}
-economy.bank.version = 1.00
-economy.bank.modpath = minetest.get_modpath("bank")
+economies = economies or {}
+bank = bank or economies.bank or {}
+bank.version = 1.00
+bank.modpath = minetest.get_modpath("bank")
 
 -- load configuration
-dofile(economy.bank.modpath.."/config.lua")
+dofile(bank.modpath.."/config.lua")
 -- common helper functions
-dofile(economy.bank.modpath.."/common.lua")
-dofile(economy.bank.modpath.."/notifications.lua")
+dofile(bank.modpath.."/common.lua")
+dofile(bank.modpath.."/notifications.lua")
 
 -- load classes and related api
-dofile(economy.bank.modpath.."/bankaccount.lua")
-dofile(economy.bank.modpath.."/journal.lua")
-dofile(economy.bank.modpath.."/transaction.lua")
+dofile(bank.modpath.."/bankaccount.lua")
+dofile(bank.modpath.."/journal.lua")
+dofile(bank.modpath.."/transaction.lua")
 
-dofile(economy.bank.modpath.."/imports.lua")
+dofile(bank.modpath.."/imports.lua")
 
 -- add operational code
-dofile(economy.bank.modpath.."/wiretransfer.lua")
-dofile(economy.bank.modpath.."/directdebit.lua")
-dofile(economy.bank.modpath.."/control.lua")
+dofile(bank.modpath.."/wiretransfer.lua")
+dofile(bank.modpath.."/directdebit.lua")
+dofile(bank.modpath.."/control.lua")
 
 -- craftitems
---dofile(economy.bank.modpath.."/cards.lua")
+--dofile(bank.modpath.."/cards.lua")
 
 -- extra nodes
-dofile(economy.bank.modpath.."/atm.lua")
+dofile(bank.modpath.."/atm.lua")

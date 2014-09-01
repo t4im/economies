@@ -1,22 +1,22 @@
 --
 --
 --
-economy = economy or {}
-economy.markets = economy.markets or {}
-economy.markets.version = 1.00
-economy.markets.modpath = minetest.get_modpath("markets")
+economies = economies or {}
+markets = markets or economies.markets or {}
+markets.version = 1.00
+markets.modpath = minetest.get_modpath("markets")
 
 -- load configuraton
-dofile(economy.markets.modpath.."/config.lua")
+dofile(markets.modpath.."/config.lua")
 
 -- load crafting materials and upgrades
---dofile(economy.markets.modpath.."/components.lua")
+--dofile(economies.markets.modpath.."/components.lua")
 
 
 -- load markets
-dofile(economy.markets.modpath.."/common.lua")
-dofile(economy.markets.modpath.."/market_stalls.lua")
-dofile(economy.markets.modpath.."/bulk_vending_machines.lua")
-dofile(economy.markets.modpath.."/full_line_vending_machines.lua")
-dofile(economy.markets.modpath.."/displays.lua")
+dofile(markets.modpath.."/common.lua")
+dofile(markets.modpath.."/market_stalls.lua")
+dofile(markets.modpath.."/bulk_vending_machines.lua")
+dofile(markets.modpath.."/full_line_vending_machines.lua")
+dofile(markets.modpath.."/displays.lua")
 

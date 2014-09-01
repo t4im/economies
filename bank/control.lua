@@ -10,11 +10,11 @@ minetest.register_privilege("bank_admin", {
 	give_to_singleplayer = false,
 })
 
-economy = economy or {}
-economy.bank = economy.bank or {}
+economies = economies or {}
+economies.bank = economies.bank or {}
 
 -- used for notifications of malicious behavior
-function economy.bank.isSupervisor(player)
+function economies.bank.isSupervisor(player)
 	local name = player:get_player_name()
 	local privs = minetest.get_player_privs(name)
 	return privs.ban or privs.bank_teller
@@ -42,7 +42,7 @@ minetest.register_chatcommand("bankadmin", {
 				if(transferAmount and target) then
 					-- add the information, that this was an admin action and by whome
 					subject = name .. " enforced transfer. " .. (subject or "")
-					return economy.feedbackTo(name, economy.bank.Transaction:new{
+					return economies.feedbackTo(name, economies.bank.Transaction:new{
 						initiator=name,
 						source=accountName, target=target,
 						amount=transferAmount, subject=subject
@@ -50,11 +50,11 @@ minetest.register_chatcommand("bankadmin", {
 				end
 			end
 
-			local account = economy.bank.getAccount(accountName)
+			local account = economies.bank.getAccount(accountName)
 			if (command == "freeze" and args[3]) then
 				-- args[3] is just the first word though enough for the test
 				local reason = string.match(param, "freeze [^ ]+ (.+)")
-				return economy.feedbackTo(name, account:freeze(reason))
+				return economies.feedbackTo(name, account:freeze(reason))
 			end
 
 			local amount = tonumber(args[3])
@@ -66,16 +66,16 @@ minetest.register_chatcommand("bankadmin", {
 				end
 				return true
 			elseif (command == "unfreeze") then
-				return economy.feedbackTo(name, account:unfreeze())
+				return economies.feedbackTo(name, account:unfreeze())
 			elseif (command == "deposit" and amount and privs.bank_admin) then
-				economy.logAction("%s depositing %d at %s", name, amount, account)
-				return economy.feedbackTo(name, account:deposit(amount))
+				economies.logAction("%s depositing %d at %s", name, amount, account)
+				return economies.feedbackTo(name, account:deposit(amount))
 			elseif (command == "withdraw" and amount and privs.bank_admin) then
-				economy.logAction("%s withdrawing %d from %s", name, amount, account)
-				return economy.feedbackTo(name, account:withdraw(amount))
+				economies.logAction("%s withdrawing %d from %s", name, amount, account)
+				return economies.feedbackTo(name, account:withdraw(amount))
 			elseif (command == "set" and amount and privs.bank_admin) then
-				economy.logAction("%s setting %s to %d", name, account, amount)
-				return economy.feedbackTo(name, account:set(amount))
+				economies.logAction("%s setting %s to %d", name, account, amount)
+				return economies.feedbackTo(name, account:set(amount))
 			end
 		end
 
@@ -94,7 +94,7 @@ minetest.register_chatcommand("money", {
 	func = function(name,  param)
 		-- /money
 		if param == "" then
-			local account = economy.bank.getAccount(name)
+			local account = economies.bank.getAccount(name)
 			minetest.chat_send_player(name, account:printBalance())
 
 			if (account.frozen) then
@@ -109,7 +109,7 @@ minetest.register_chatcommand("money", {
 
 		-- /money pay <account> <amount>
 		if (command == "pay" and target and amount) then
-			return economy.bank.wire(name, target, amount)
+			return economies.bank.wire(name, target, amount)
 		else
 			minetest.chat_send_player(name, "Invalid parameters (see /help money)")
 			return false
