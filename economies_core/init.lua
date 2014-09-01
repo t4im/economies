@@ -14,4 +14,5 @@ dofile(economies.modpath.."/config.lua")
 
 -- load utilties used by the economies mods
 dofile(economies.modpath.."/money.lua")
+dofile(economies.modpath.."/building_utilities.lua")
 dofile(economies.modpath.."/notifications.lua")
