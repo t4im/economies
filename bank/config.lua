@@ -5,8 +5,6 @@
 --
 local defaults = {
 	initial_amount = "0",
-	currency_format = "%dcr",
-	currency_name = "credit",
 	bank_path = "/bank",
 	-- formatstring. If set, load balance out of the file found via this configuration.
 	-- path is expected relative to the world path

@@ -1,1 +1,6 @@
 # This file is expected in the worldpath
+
+# formatstring used when representing amounts of money
+# %d will be replaced with the amount
+# currency_format = "%dcr"
+# currency_name = "credit"

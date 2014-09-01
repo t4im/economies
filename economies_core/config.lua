@@ -4,6 +4,8 @@
 -- use economies.conf in your worldpath to change any settings listed as defaults here
 --
 local defaults = {
+	currency_format = "%dcr",
+	currency_name = "credit",
 }
 
 -- configuration slurping
