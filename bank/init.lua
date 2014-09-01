@@ -26,6 +26,7 @@ dofile(bank.modpath.."/control.lua")
 
 -- craftitems
 --dofile(bank.modpath.."/cards.lua")
+--dofile(bank.modpath.."/components.lua")
 
--- extra nodes
+-- extra items and nodes
 dofile(bank.modpath.."/atm.lua")
