@@ -18,4 +18,5 @@ economies.debugging = conf_table["debug"] or minetest.setting_getbool("debug_mod
 
 -- optional dependency support
 economies.with_landrush = minetest.get_modpath("landrush") ~= nil
-economies.with_protection = economies.with_landrush -- or..
+economies.with_areas = minetest.get_modpath("areas") ~= nil
+economies.with_protection = economies.with_landrush or economies.with_areas

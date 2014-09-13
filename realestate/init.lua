@@ -15,7 +15,11 @@ if economies.with_protection then
 	dofile(realestate.modpath.."/forsale_signs.lua")
 end
 
--- landrush support
+-- protection mod support
 if economies.with_landrush then
 	dofile(realestate.modpath.."/implementations/landrush.lua")
+end
+
+if economies.with_areas then
+	dofile(realestate.modpath.."/implementations/areas.lua")
 end
