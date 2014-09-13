@@ -31,8 +31,8 @@ function economies.bank.debit(from, to, amount, subject)
 	-- if both players are from the same ip it might be a possible cheating attempt
 	-- since we only accept transfers to online players, this is bound to be noticed
 	if minetest.get_player_ip(from) == minetest.get_player_ip(to) then
-		sourceAccount:freeze(string.format("direct debit attempt of %s from %s, having the same ip address", economies.formatMoney(amount), from))
-		targetAccount:freeze(string.format("target of an direct debit attempt of %s to %s, having the same ip address", economies.formatMoney(amount), to))
+		transaction:from():freeze(string.format("direct debit attempt of %s from %s, having the same ip address", economies.formatMoney(amount), from))
+		transaction:to():freeze(string.format("target of an direct debit attempt of %s to %s, having the same ip address", economies.formatMoney(amount), to))
 
 		economies.notifyAny(economies.bank.isSupervisor,
 			"%s tried a direct debit of %s from %s. Both clients are connected from the same IP address. The Accounts were preventively frozen.",

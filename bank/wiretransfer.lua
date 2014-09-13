@@ -23,8 +23,8 @@ function economies.bank.wire(from, to, amount, subject)
 	-- if both players are from the same ip it might be a possible cheating attempt
 	-- since we only accept transfers to online players, this is bound to be noticed
 	if minetest.get_player_ip(from) == minetest.get_player_ip(to) then
-		sourceAccount:freeze(string.format("attempt to transfer %s to %s, having the same ip address", economies.formatMoney(amount), to))
-		targetAccount:freeze(string.format("target of an attempt to transfer %s from %s, having the same ip address", economies.formatMoney(amount), from))
+		transaction:from():freeze(string.format("attempt to transfer %s to %s, having the same ip address", economies.formatMoney(amount), to))
+		transaction:to():freeze(string.format("target of an attempt to transfer %s from %s, having the same ip address", economies.formatMoney(amount), from))
 
 		economies.notifyAny(economies.bank.isSupervisor,
 			"%s tried to transfer %s to %s. Both clients are connected from the same IP address. The Accounts were preventively frozen.",
