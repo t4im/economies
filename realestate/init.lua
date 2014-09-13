@@ -17,5 +17,5 @@ end
 
 -- landrush support
 if economies.with_landrush then
-	dofile(realestate.modpath.."/landrush_landsale.lua")
+	dofile(realestate.modpath.."/implementations/landrush.lua")
 end
