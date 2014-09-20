@@ -3,40 +3,7 @@ economies.bank = economies.bank or {}
 
 function economies.bank.wire(from, to, amount, subject)
 	local transaction = economies.bank.Transaction:new{source=from, target=to, amount=amount, subject=subject}
-
-	local good, feedback = transaction:check()
-	if not good then
-		minetest.chat_send_player(from, feedback or "Wire transfer failed")
-		return false
-	end
-
-	-- only allow transactions with online players to avoid
-	-- * creating unnecessary accounts
-	-- * lost money during transaction due to typos
-	-- * transfers to alternative accounts without getting noticed
-	local targetPlayer = minetest.get_player_by_name(to)
-	if (not targetPlayer) then
-		minetest.chat_send_player(from, to .. " is currently offline.")
-		return false
-	end
-
-	-- if both players are from the same ip it might be a possible cheating attempt
-	-- since we only accept transfers to online players, this is bound to be noticed
-	if minetest.get_player_ip(from) == minetest.get_player_ip(to) then
-		transaction:from():freeze(string.format("attempt to transfer %s to %s, having the same ip address", economies.formatMoney(amount), to))
-		transaction:to():freeze(string.format("target of an attempt to transfer %s from %s, having the same ip address", economies.formatMoney(amount), from))
-
-		economies.notifyAny(economies.bank.isSupervisor,
-			"%s tried to transfer %s to %s. Both clients are connected from the same IP address. The Accounts were preventively frozen.",
-			from, economies.formatMoney(amount), to
-		)
-		minetest.chat_send_player(from,
-			"You tried to transfer money to an account that originates from the same network as you.\n" ..
-			"To prevent potential abuse the transfer was denied and admins were notified."
-		)
-		return false
-	end
-
+	transaction:from():getOwner():assertMayInit(transaction)
 	return transaction:commit()
 end
 

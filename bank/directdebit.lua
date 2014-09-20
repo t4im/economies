@@ -11,40 +11,7 @@ minetest.register_privilege("debit", {
 
 function economies.bank.debit(from, to, amount, subject)
 	local transaction = economies.bank.Transaction:new{initiator=to, source=from, target=to, amount=amount, subject=subject}
-
-	local good, feedback = transaction:check()
-	if not good then
-		minetest.chat_send_player(to, feedback or "Direct debit failed")
-		return false
-	end
-
-	-- only allow transactions with online players to avoid
-	-- * creating unnecessary accounts
-	-- * lost money during transaction due to typos
-	-- * transfers to alternative accounts without getting noticed
-	local targetPlayer = minetest.get_player_by_name(from)
-	if (not targetPlayer) then
-		minetest.chat_send_player(to, from .. " is currently offline.")
-		return false
-	end
-
-	-- if both players are from the same ip it might be a possible cheating attempt
-	-- since we only accept transfers to online players, this is bound to be noticed
-	if minetest.get_player_ip(from) == minetest.get_player_ip(to) then
-		transaction:from():freeze(string.format("direct debit attempt of %s from %s, having the same ip address", economies.formatMoney(amount), from))
-		transaction:to():freeze(string.format("target of an direct debit attempt of %s to %s, having the same ip address", economies.formatMoney(amount), to))
-
-		economies.notifyAny(economies.bank.isSupervisor,
-			"%s tried a direct debit of %s from %s. Both clients are connected from the same IP address. The Accounts were preventively frozen.",
-			to, economies.formatMoney(amount), from
-		)
-		minetest.chat_send_player(to,
-			"You tried to debit money from an account that originates from the same network as you.\n" ..
-			"To prevent potential abuse the direct debit was denied and admins were notified."
-		)
-		return false
-	end
-
+	transaction:to():getOwner():assertMayInit(transaction)
 	economies.bank.openDebitFormspec(transaction)
 	return true
 end
