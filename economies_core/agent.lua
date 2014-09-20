@@ -49,15 +49,15 @@ function economies.Agent:assertMayInit(transaction)
 	-- if both players are from the same ip it might be a possible cheating attempt
 	-- since we only accept transfers to online players, this is bound to be noticed
 	if minetest.get_player_ip(self.name) == minetest.get_player_ip(other) then
-		transaction:from():freeze(string.format("attempt to transfer %s to %s, having the same ip address", economies.formatMoney(amount), to))
-		transaction:to():freeze(string.format("target of an attempt to transfer %s from %s, having the same ip address", economies.formatMoney(amount), from))
+		local type = transaction.getType()
+		transaction:from():freeze(string.format("attempt of %s-transaction %s to %s, having the same ip address", type, economies.formatMoney(amount), to))
+		transaction:to():freeze(string.format("target of %s-transaction attempt %s from %s, having the same ip address", type, economies.formatMoney(amount), from))
 
 		economies.notifyAny(economies.bank.isSupervisor,
-			"%s tried to transfer %s to %s. Both clients are connected from the same IP address. The Accounts were preventively frozen.",
-			from, economies.formatMoney(amount), to
+			"%s attempted %s-transaction with player of same ip-address: %s from %s to %s. The accounts were preventively frozen.",
+			self.name, type, economies.formatMoney(amount), from, to
 		)
-		self:notify(from,
-			"You tried to transfer money to an account that originates from the same network as you.\n" ..
+		self:notify("You tried to start a transaction with an accountholder that originates from the same network as you.\n" ..
 			"To prevent potential abuse the transfer was denied and admins were notified."
 		)
 		return false
