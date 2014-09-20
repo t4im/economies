@@ -12,6 +12,9 @@ economies.version.patch = 0
 -- load configuration
 dofile(economies.modpath.."/config.lua")
 
+-- load generic classes
+dofile(economies.modpath.."/agent.lua")
+
 -- load utilties used by the economies mods
 dofile(economies.modpath.."/money.lua")
 dofile(economies.modpath.."/building_utilities.lua")
