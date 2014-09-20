@@ -40,7 +40,7 @@ function economies.bank.Transaction:initiator() return self.initiator or self.so
 
 function economies.bank.Transaction:describe() return ("%s transfers %d (%s -> %s) %s"):format(self.initiator or "player", self.amount, self.source, self.target, self.subject or "-") end
 
-function economies.bank.Transaction:type()
+function economies.bank.Transaction:getType()
 	if type then
 		return type
 	elseif not self.initiator or self.initiator == self.source then
@@ -94,7 +94,7 @@ end
 function economies.bank.Transaction:isLegit()
 	local from, to = self:from(), self:to()
 
-	if self:type() == "admin" then
+	if self:getType() == "admin" then
 		return true
 	end
 
@@ -137,7 +137,7 @@ function economies.bank.Transaction:commit()
 	to.balance = to.balance + self.amount
 
 	local amountString = economies.formatMoney(self.amount)
-	local transactionType = self:type()
+	local transactionType = self:getType()
 	fromOwner:notify("You paid %s to %s via %s transfer", amountString, toOwner.name, transactionType)
 
 	if self.subject then
