@@ -138,10 +138,13 @@ function economies.bank.Transaction:commit()
 
 	local amountString = economies.formatMoney(self.amount)
 	local transactionType = self:type()
-	minetest.chat_send_player(fromOwner, string.format("You paid %s to %s via %s transfer", amountString, toOwner, transactionType))
-	minetest.chat_send_player(toOwner, string.format("%s paid you %s via %s transfer", fromOwner, amountString, transactionType))
+	fromOwner:notify("You paid %s to %s via %s transfer", amountString, toOwner.name, transactionType)
+
 	if self.subject then
-		minetest.chat_send_player(toOwner, "Subject: " .. self.subject)
+		toOwner:notify("%s paid you %s via %s transfer.\n" ..
+				"Subject: %s", fromOwner.name, amountString, transactionType, self.subject)
+	else
+		toOwner:notify("%s paid you %s via %s transfer", fromOwner.name, amountString, transactionType)
 	end
 
 	return from:save() and to:save()

@@ -25,14 +25,15 @@ function economies.bank.Account:new(object)
 	return object
 end
 
--- at this time owner and name are identical, but this might be changed in the future
-function economies.bank.Account:getOwner() return self.owner or name end
+function economies.bank.Account:getOwner()
+	return economies.Agent:new{name=self.owner or name}
+end
 
 function economies.bank.Account:printBalance() return economies.formatMoney(self.balance) end
 -- return false if frozen with reason or true with 'nil' as reason
 function economies.bank.Account:assertActive()	return not self.frozen, self.frozen end
 -- either account or playerfile with money privilege must exist
-function economies.bank.Account:exists() return (not self.transient) or minetest.get_player_privs(self:getOwner()).money end
+function economies.bank.Account:exists() return (not self.transient) or minetest.get_player_privs(self.owner or name).money end
 
 function economies.bank.Account:describe()
 	return string.format("'%s' with %s. Frozen: %s", self.name, self:printBalance(), self.frozen or "no")
@@ -83,7 +84,7 @@ function economies.bank.Account:freeze(reason)
 
 	economies.logAction("freezing account %s for %s", self.name, reason)
 	self.frozen = reason
-	minetest.chat_send_player(self:getOwner(), "Your bankaccount has been frozen: " .. reason)
+	self:getOwner():notify("Your bankaccount has been frozen: " .. reason)
 	return self:save()
 end
 
@@ -91,7 +92,7 @@ function economies.bank.Account:unfreeze()
 	if not self:exists() then return false, "neither account nor player exist" end
 	economies.logAction("unfreezing account: " .. self.name)
 	self.frozen = nil
-	minetest.chat_send_player(self:getOwner(), "Your bankaccount has been unfrozen.")
+	self:getOwner():notify("Your bankaccount has been unfrozen.")
 	return self:save()
 end
 
