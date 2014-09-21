@@ -116,7 +116,7 @@ end
 -- ==================
 economies.bank.accounts = economies.bank.accounts or {}
 
-local bankPath = minetest.get_worldpath() .. economies.config:get("bank_path") .. "/"
+local bankPath = minetest.get_worldpath() .. DIR_DELIM .. economies.config:get("bank_path") .. DIR_DELIM
 local accountFile = function(name) return bankPath .. name .. ".account" end
 
 -- initial run to load indexed information and check our bank path exists at all during startup

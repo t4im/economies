@@ -5,7 +5,7 @@
 --
 local defaults = {
 	initial_amount = "0",
-	bank_path = "/bank",
+	bank_path = "bank",
 	-- formatstring. If set, load balance out of the file found via this configuration.
 	-- path is expected relative to the world path
 	-- Use %s for the playername.
@@ -19,7 +19,7 @@ local defaults = {
 }
 
 -- configuration slurping
-economies.config = economies.config or Settings(minetest.get_worldpath().."/economies.conf")
+economies.config = economies.config or Settings(minetest.get_worldpath() .. DIR_DELIM .. "economies.conf")
 local conf_table = economies.config:to_table()
 
 for k, v in pairs(defaults) do

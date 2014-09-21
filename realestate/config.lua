@@ -7,7 +7,7 @@ local defaults = {
 }
 
 -- configuration slurping
-economies.config = economies.config or Settings(minetest.get_worldpath().."/economies.conf")
+economies.config = economies.config or Settings(minetest.get_worldpath() .. DIR_DELIM .. "economies.conf")
 local conf_table = economies.config:to_table()
 
 for k, v in pairs(defaults) do
