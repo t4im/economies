@@ -66,6 +66,7 @@ function economies.markets.register_market(name, spec)
 	}
 	spec.paramtype = spec.paramtype or "light"
 	spec.paramtype2 = spec.paramtype2 or "facedir"
+	spec.drawtype = spec.drawtype or (spec.node_box and "nodebox")
 	spec.groups = spec.groups or economies.markets.defaults.group
 	spec.can_dig = spec.can_dig or economies.markets.defaults.can_dig
 --	spec.on_receive_fields = spec.on_receive_fields or economies.markets.defaults.on_receive_fields

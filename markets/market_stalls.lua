@@ -21,7 +21,6 @@ economies.markets.register_market("markets:treasure_box", {
 		local meta = minetest.get_meta(pos)
 		meta:get_inventory():set_size("main", 4)
 	end,
-	drawtype = "nodebox",
 	node_box = {
 		type = "fixed",
 			fixed = {
