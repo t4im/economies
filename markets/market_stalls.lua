@@ -6,7 +6,7 @@
 -- they represent good shops for players just beginning to sell or buy goods (and thus should be a bit cheaper to craft)
 -- but don't allow automation, shop extension or scaling as it'll be wanted for advanced shops
 
-minetest.register_node("markets:treasure_box", {
+economies.markets.register_market("markets:treasure_box", {
 	description = "a cheap box with mixed stuff sold for the same price",
 	tiles = {
 		"homedecor_cardboard_box_sides.png",
@@ -15,14 +15,10 @@ minetest.register_node("markets:treasure_box", {
 		"homedecor_cardboard_box_sides.png",
 		"homedecor_cardboard_box_sides.png",
 		"homedecor_cardboard_box_sides.png",
-	},
-	paramtype = "light",
-	paramtype2 = "facedir",
+	}
 	groups = { snappy=2, choppy=2, oddly_breakable_by_hand=2, flammable=1 },
-	after_place_node = function(pos, placer, itemstack, pointed_thing)
+	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
-		local playername = placer:get_player_name()
-		meta:set_string("owner", playername)
 		meta:get_inventory():set_size("main", 4)
 	end,
 	drawtype = "nodebox",
@@ -37,13 +33,4 @@ minetest.register_node("markets:treasure_box", {
 		}
 	},
 	drop = "default:paper",
-	can_dig = economies.markets.defaults.can_dig,
---	on_receive_fields = economies.markets.defaults.on_receive_fields,
---	on_punch = economies.markets.defaults.on_punch,
-	allow_metadata_inventory_move = economies.markets.defaults.allow_metadata_inventory_move,
-	allow_metadata_inventory_put = economies.markets.defaults.allow_metadata_inventory_put,
-	allow_metadata_inventory_take = economies.markets.defaults.allow_metadata_inventory_take,
-	on_metadata_inventory_move = economies.markets.defaults.on_metadata_inventory_move,
-	on_metadata_inventory_put = economies.markets.defaults.on_metadata_inventory_put,
-	on_metadata_inventory_take = economies.markets.defaults.on_metadata_inventory_take,
 })
