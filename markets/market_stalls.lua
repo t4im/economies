@@ -15,7 +15,7 @@ economies.markets.register_market("markets:treasure_box", {
 		"homedecor_cardboard_box_sides.png",
 		"homedecor_cardboard_box_sides.png",
 		"homedecor_cardboard_box_sides.png",
-	}
+	},
 	groups = { snappy=2, choppy=2, oddly_breakable_by_hand=2, flammable=1 },
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
