@@ -54,6 +54,8 @@ end
 
 -- registration
 function economies.markets.register_market(name, spec)
+	spec.description = spec.description and spec.description .. " (shop)"
+
 	spec.tiles = spec.tiles or {
 		"default_chest_top.png",
 		"default_chest_top.png",
