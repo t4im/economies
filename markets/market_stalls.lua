@@ -34,3 +34,11 @@ economies.markets.register_market("markets:treasure_box", {
 	},
 	drop = "default:paper",
 })
+
+economies.markets.register_market("markets:medium_stall", {
+	description = "medium market stall (shop)",
+	on_construct = function(pos)
+		local meta = minetest.get_meta(pos)
+		meta:get_inventory():set_size("main", 32)
+	end,
+})
