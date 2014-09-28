@@ -13,6 +13,9 @@ economies.version.patch = 0
 -- load configuration
 dofile(economies.modpath .. "config.lua")
 
+-- smartfs formspec framework
+dofile(economies.modpath .. "smartfs.lua")
+
 -- load generic classes
 dofile(economies.modpath .. "agent.lua")
 
