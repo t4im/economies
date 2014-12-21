@@ -26,14 +26,14 @@ function economies.bank.Account:new(object)
 end
 
 function economies.bank.Account:getOwner()
-	return economies.Agent:new{name=self.owner or name}
+	return economies.Agent:new{name=self.owner or self.name}
 end
 
 function economies.bank.Account:printBalance() return economies.formatMoney(self.balance) end
 -- return false if frozen with reason or true with 'nil' as reason
 function economies.bank.Account:assertActive()	return not self.frozen, self.frozen end
 -- either account or playerfile with money privilege must exist
-function economies.bank.Account:exists() return (not self.transient) or minetest.get_player_privs(self.owner or name).money end
+function economies.bank.Account:exists() return (not self.transient) or minetest.get_player_privs(self.owner or self.name).money end
 
 function economies.bank.Account:describe()
 	return string.format("'%s' with %s. Frozen: %s", self.name, self:printBalance(), self.frozen or "no")
