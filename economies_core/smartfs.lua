@@ -199,6 +199,9 @@ function smartfs._makeState_(form,player,params,is_inv)
 		listbox = function(self,x,y,w,h,name)
 			return self:element("list", { pos={x=x,y=y}, size={w=w,h=h}, name=name })
 		end,
+		inventory = function(self,x,y,w,h,name,location,index)
+			return self:element("inventory", { pos={x=x,y=y}, size={w=w,h=h}, name=name, location=location, index=index })
+		end,
 		element = function(self,typen,data)
 			local type = smartfs._edef[typen]
 			
@@ -669,6 +672,46 @@ smartfs.element("list",{
 		local item = self.data.items[#self.data.items]
 		table.remove(self.data.items)
 		return item
+	end
+})
+
+smartfs.element("inventory",{
+	build = function(self)
+		return "list["..
+			self.data.location..
+			";"..
+			self.name..
+			";"..
+			self.data.pos.x..","..self.data.pos.y..
+			";"..
+			self.data.size.w..","..self.data.size.h..
+			";"..
+			(self.data.index or "") ..
+			"]"
+	end,
+	setPosition = function(self,x,y)
+		self.data.pos = {x=x,y=y}
+	end,
+	getPosition = function(self,x,y)
+		return self.data.pos
+	end,
+	setSize = function(self,w,h)
+		self.data.size = {w=w,h=h}
+	end,
+	getSize = function(self,x,y)
+		return self.data.size
+	end,
+	setLocation = function(self,location)
+		self.data.location = location
+	end,
+	getLocation = function(self)
+		return self.data.location
+	end,
+	setIndex = function(self,index)
+		self.data.index = index
+	end,
+	getIndex = function(self)
+		return self.data.index
 	end
 })
 
