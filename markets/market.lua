@@ -5,20 +5,11 @@ local function isOwner(player, pos) return player:get_player_name() == minetest.
 
 economies.markets.defaults = {
 	group = { snappy=2, choppy=2 },
-	after_place_node = function(pos, placer, itemstack, pointed_thing)
-		local meta = minetest.get_meta(pos)
-		local playername = placer:get_player_name()
-		meta:set_string("owner", playername)
-	end,
 	can_dig = function(pos, player)
 		local meta = minetest.get_meta(pos)
 		local inv = meta:get_inventory()
 		return inv:is_empty("main")
 	end,
-	--on_punch = function(pos, node, puncher, pointed_thing)
-	--	minetest.node_punch(pos, node, puncher, pointed_thing)
-	--end,
-
 	-- inventories
 	allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
 		if not isOwner(player, pos) then
@@ -67,8 +58,6 @@ function economies.markets.register_market(name, spec)
 	spec.drawtype = spec.drawtype or (spec.node_box and "nodebox")
 	spec.groups = spec.groups or economies.markets.defaults.group
 	spec.can_dig = spec.can_dig or economies.markets.defaults.can_dig
---	spec.on_receive_fields = spec.on_receive_fields or economies.markets.defaults.on_receive_fields
---	spec.on_punch = spec.on_punch or economies.markets.defaults.on_punch
 	spec.allow_metadata_inventory_move = spec.allow_metadata_inventory_move or economies.markets.defaults.allow_metadata_inventory_move
 	spec.allow_metadata_inventory_put = spec.allow_metadata_inventory_put or economies.markets.defaults.allow_metadata_inventory_put
 	spec.allow_metadata_inventory_take = spec.allow_metadata_inventory_take or economies.markets.defaults.allow_metadata_inventory_take
@@ -76,10 +65,9 @@ function economies.markets.register_market(name, spec)
 	spec.on_metadata_inventory_put = spec.on_metadata_inventory_put or economies.markets.defaults.on_metadata_inventory_put
 	spec.on_metadata_inventory_take = spec.on_metadata_inventory_take or economies.markets.defaults.on_metadata_inventory_take
 
-	spec.on_construct = spec.on_construct or function(pos)
-		local meta = minetest.get_meta(pos)
-		-- meta:get_inventory():set_size("main", 4)
-	end
+--	spec.on_construct = spec.on_construct or function(pos)
+--		local meta = minetest.get_meta(pos)
+--	end
 
 	spec.after_place_node = spec.after_place_node or function(pos, placer, itemstack, pointed_thing)
 		local meta = minetest.get_meta(pos)
@@ -88,7 +76,11 @@ function economies.markets.register_market(name, spec)
 		meta:set_string("infotext", "Unconfigured Shop (owned by " .. playername .. ")")
 	end
 
---	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+	spec.on_receive_fields = spec.on_receive_fields or function(pos, formname, fields, sender)
+		local meta = minetest.get_meta(pos)
+	end
+
+--	spec.on_punch = spec.on_punch or economies.markets.defaults.on_punch or function(pos, node, puncher, pointed_thing)
 --	end
 
 	minetest.register_node(name, spec)
