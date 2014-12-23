@@ -53,7 +53,7 @@ function economies.Agent:assertMayInit(transaction)
 		transaction:from():freeze(string.format("attempt of %s-transaction %s to %s, having the same ip address", type, economies.formatMoney(amount), to))
 		transaction:to():freeze(string.format("target of %s-transaction attempt %s from %s, having the same ip address", type, economies.formatMoney(amount), from))
 
-		economies.notifyAny(economies.bank.isSupervisor,
+		economies.notifyAny(bank.isSupervisor,
 			"%s attempted %s-transaction with player of same ip-address: %s from %s to %s. The accounts were preventively frozen.",
 			self.name, type, economies.formatMoney(amount), from, to
 		)

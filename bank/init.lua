@@ -3,8 +3,8 @@
 -- allows storing and transferring funds between players
 --
 DIR_DELIM = DIR_DELIM or "/"
-economies = economies or {}
-bank = bank or economies.bank or {}
+economies = economies {}
+bank = bank or {}
 bank.version = 1.00
 bank.modpath = minetest.get_modpath("bank") .. DIR_DELIM
 
@@ -31,3 +31,5 @@ dofile(bank.modpath .. "control.lua")
 
 -- extra items and nodes
 dofile(bank.modpath .. "atm.lua")
+
+economies.bank = bank

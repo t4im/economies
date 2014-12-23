@@ -3,7 +3,7 @@
 --
 DIR_DELIM = DIR_DELIM or "/"
 economies = economies or {}
-realestate = realestate or economies.realestate or {}
+realestate = realestate or {}
 realestate.version = 1.00
 realestate.modpath = minetest.get_modpath("realestate") .. DIR_DELIM
 
@@ -24,3 +24,5 @@ end
 if economies.with_areas then
 	dofile(realestate.modpath .. "implementations/areas.lua")
 end
+
+economies.realestate = realestate

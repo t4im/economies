@@ -1,8 +1,8 @@
 economies = economies or {}
-economies.bank = economies.bank or {}
+bank = bank or {}
 
-function economies.bank.wire(from, to, amount, subject)
-	local transaction = economies.bank.Transaction:new{source=from, target=to, amount=amount, subject=subject}
+function bank.wire(from, to, amount, subject)
+	local transaction = bank.Transaction:new{source=from, target=to, amount=amount, subject=subject}
 	transaction:from():getOwner():assertMayInit(transaction)
 	return transaction:commit()
 end
@@ -11,13 +11,13 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	if formname ~= "bank:wire_formspec" then return end
 
 	if fields.transfer then
-		economies.bank.wire(player:get_player_name(), fields.to, fields.amount, fields.subject)
+		bank.wire(player:get_player_name(), fields.to, fields.amount, fields.subject)
 	end
 end)
 
-function economies.bank.openWireFormspec(player)
+function bank.openWireFormspec(player)
 	local playername = player:get_player_name()
-	local account = economies.bank.getAccount(playername)
+	local account = bank.getAccount(playername)
 	local formspec = "size[10,7]"..
 		"label[0.75,0.75; Welcome " .. playername .. "]" ..
 		"label[5,0.75;" ..
@@ -42,7 +42,7 @@ minetest.register_chatcommand("wire", {
 		amount = tonumber(amount)
 
 		if (account and amount and subject) then
-			return economies.bank.wire(name, account, amount, subject)
+			return bank.wire(name, account, amount, subject)
 		end
 
 		minetest.chat_send_player(name, "Usage: <account> <amount> [<subject>])")

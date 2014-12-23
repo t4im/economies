@@ -11,10 +11,10 @@ minetest.register_privilege("bank_admin", {
 })
 
 economies = economies or {}
-economies.bank = economies.bank or {}
+bank = bank or {}
 
 -- used for notifications of malicious behavior
-function economies.bank.isSupervisor(player)
+function bank.isSupervisor(player)
 	local name = player:get_player_name()
 	local privs = minetest.get_player_privs(name)
 	return privs.ban or privs.bank_teller
@@ -42,7 +42,7 @@ minetest.register_chatcommand("bankadmin", {
 				if(transferAmount and target) then
 					-- add the information, that this was an admin action and by whome
 					subject = name .. " enforced transfer. " .. (subject or "")
-					return economies.feedbackTo(name, economies.bank.Transaction:new{
+					return economies.feedbackTo(name, bank.Transaction:new{
 						initiator=name,
 						source=accountName, target=target,
 						amount=transferAmount, subject=subject
@@ -50,7 +50,7 @@ minetest.register_chatcommand("bankadmin", {
 				end
 			end
 
-			local account = economies.bank.getAccount(accountName)
+			local account = bank.getAccount(accountName)
 			if (command == "freeze" and args[3]) then
 				-- args[3] is just the first word though enough for the test
 				local reason = string.match(param, "freeze [^ ]+ (.+)")
@@ -94,7 +94,7 @@ minetest.register_chatcommand("money", {
 	func = function(name,  param)
 		-- /money
 		if param == "" then
-			local account = economies.bank.getAccount(name)
+			local account = bank.getAccount(name)
 			minetest.chat_send_player(name, account:printBalance())
 
 			if (account.frozen) then
@@ -109,7 +109,7 @@ minetest.register_chatcommand("money", {
 
 		-- /money pay <account> <amount>
 		if (command == "pay" and target and amount) then
-			return economies.bank.wire(name, target, amount)
+			return bank.wire(name, target, amount)
 		else
 			minetest.chat_send_player(name, "Invalid parameters (see /help money)")
 			return false

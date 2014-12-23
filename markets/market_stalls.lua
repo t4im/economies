@@ -6,7 +6,7 @@
 -- they represent good shops for players just beginning to sell or buy goods (and thus should be a bit cheaper to craft)
 -- but don't allow automation, shop extension or scaling as it'll be wanted for advanced shops
 
-economies.markets.register_market("markets:treasure_box", {
+markets.register_market("markets:treasure_box", {
 	description = "a cheap box with mixed stuff sold for the same price",
 	tiles = {
 		"homedecor_cardboard_box_sides.png",
@@ -34,7 +34,7 @@ economies.markets.register_market("markets:treasure_box", {
 	drop = "default:paper",
 })
 
-economies.markets.register_market("markets:medium_stall", {
+markets.register_market("markets:medium_stall", {
 	description = "medium market stall",
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)

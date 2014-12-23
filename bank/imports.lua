@@ -1,3 +1,5 @@
+bank = bank or {}
+
 local worldpath = minetest.get_worldpath() .. "/"
 local import_path = economies.config:get("import_path")
 local import_type = economies.config:get("import_type")
@@ -8,7 +10,7 @@ local function importNIFAccount(name)
 	if not input then return false end
 	local balance = input:read("*n")
 	io.close(output)
-	return economies.bank.Account:new{name=name, balance=balance, created=os.time(), transient=true, }
+	return bank.Account:new{name=name, balance=balance, created=os.time(), transient=true, }
 end
 
 -- imports from a passed table by common used table field names
@@ -27,7 +29,7 @@ local function importAccountTableEntry(name, entry)
 		return nil
 	end
 
-	return economies.bank.Account:new{name=name, balance=balance, created=os.time(), transient=true, frozen=frozen,}
+	return bank.Account:new{name=name, balance=balance, created=os.time(), transient=true, frozen=frozen,}
 end
 
 -- imports accounts serialized into one big table
@@ -48,7 +50,7 @@ local function importBigTableAccount(name)
 	return importAccountTableEntry(name, accountTable)
 end
 
-function economies.bank.importAccount(name)
+function bank.importAccount(name)
 	if not import_path or not import_type then
 		return nil
 	end

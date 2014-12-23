@@ -1,9 +1,9 @@
 -- call the functions that make the landselling happen
 -- not mixing these with the forsale signs allows us to
 -- add other nodes, for example aliased ones from protectionmods
-local forsale_receive_fields = economies.realestate.landsale.receive_fields
-local forsale_punch = economies.realestate.landsale.punch
-local forsale_construct = economies.realestate.landsale.construct
+local forsale_receive_fields = realestate.landsale.receive_fields
+local forsale_punch = realestate.landsale.punch
+local forsale_construct = realestate.landsale.construct
 
 minetest.register_node("realestate:forsale_sign", {
 	description = "For Sale sign",

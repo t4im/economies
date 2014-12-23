@@ -1,5 +1,5 @@
 economies = economies or {}
-economies.bank = economies.bank or {}
+bank = bank or {}
 
 -- while this might not be abused to steal money,
 -- it might very well be used to spam other players with debit requests
@@ -9,10 +9,10 @@ minetest.register_privilege("debit", {
 	give_to_singleplayer = false,
 })
 
-function economies.bank.debit(from, to, amount, subject)
-	local transaction = economies.bank.Transaction:new{initiator=to, source=from, target=to, amount=amount, subject=subject}
+function bank.debit(from, to, amount, subject)
+	local transaction = bank.Transaction:new{initiator=to, source=from, target=to, amount=amount, subject=subject}
 	transaction:to():getOwner():assertMayInit(transaction)
-	economies.bank.openDebitFormspec(transaction)
+	bank.openDebitFormspec(transaction)
 	return true
 end
 
@@ -35,7 +35,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	end
 end)
 
-function economies.bank.openDebitFormspec(transaction)
+function bank.openDebitFormspec(transaction)
 	local playername = transaction.source
 	local greeting = ("Hello %s. Your balance is %s\n%s asks you for a payment of %s.")
 			:format(playername, transaction:from():printBalance(), transaction.target, transaction:printAmount())
@@ -64,7 +64,7 @@ minetest.register_chatcommand("debit", {
 		amount = tonumber(amount)
 
 		if (account and amount and subject) then
-			return economies.bank.debit(account, name, amount, subject)
+			return bank.debit(account, name, amount, subject)
 		end
 
 		minetest.chat_send_player(name, "Usage: <account> <amount> <subject>")

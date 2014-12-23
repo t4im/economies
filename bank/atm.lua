@@ -41,7 +41,7 @@ minetest.register_node("bank:atm_bottom", {
 		meta:set_string("infotext", "ATM")
 	end,
 	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
-		economies.bank.openWireFormspec(clicker)
+		bank.openWireFormspec(clicker)
 	end,
 	on_place = function(itemstack, placer, pointed_thing)
 		local pos = economies.basePos(pointed_thing)

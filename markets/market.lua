@@ -1,9 +1,9 @@
 economies = economies or {}
-economies.markets = economies.markets or {}
+markets = markets or {}
 
 local function isOwner(player, pos) return player:get_player_name() == minetest.get_meta(pos):get_string("owner") end
 
-economies.markets.defaults = {
+markets.defaults = {
 	group = { snappy=2, choppy=2 },
 	can_dig = function(pos, player)
 		local meta = minetest.get_meta(pos)
@@ -42,7 +42,7 @@ economies.markets.defaults = {
 }
 
 -- registration
-function economies.markets.register_market(name, spec)
+function markets.register_market(name, spec)
 	spec.description = spec.description and spec.description .. " (shop)"
 
 	spec.tiles = spec.tiles or {
@@ -56,14 +56,14 @@ function economies.markets.register_market(name, spec)
 	spec.paramtype = spec.paramtype or "light"
 	spec.paramtype2 = spec.paramtype2 or "facedir"
 	spec.drawtype = spec.drawtype or (spec.node_box and "nodebox")
-	spec.groups = spec.groups or economies.markets.defaults.group
-	spec.can_dig = spec.can_dig or economies.markets.defaults.can_dig
-	spec.allow_metadata_inventory_move = spec.allow_metadata_inventory_move or economies.markets.defaults.allow_metadata_inventory_move
-	spec.allow_metadata_inventory_put = spec.allow_metadata_inventory_put or economies.markets.defaults.allow_metadata_inventory_put
-	spec.allow_metadata_inventory_take = spec.allow_metadata_inventory_take or economies.markets.defaults.allow_metadata_inventory_take
-	spec.on_metadata_inventory_move = spec.on_metadata_inventory_move or economies.markets.defaults.on_metadata_inventory_move
-	spec.on_metadata_inventory_put = spec.on_metadata_inventory_put or economies.markets.defaults.on_metadata_inventory_put
-	spec.on_metadata_inventory_take = spec.on_metadata_inventory_take or economies.markets.defaults.on_metadata_inventory_take
+	spec.groups = spec.groups or markets.defaults.group
+	spec.can_dig = spec.can_dig or markets.defaults.can_dig
+	spec.allow_metadata_inventory_move = spec.allow_metadata_inventory_move or markets.defaults.allow_metadata_inventory_move
+	spec.allow_metadata_inventory_put = spec.allow_metadata_inventory_put or markets.defaults.allow_metadata_inventory_put
+	spec.allow_metadata_inventory_take = spec.allow_metadata_inventory_take or markets.defaults.allow_metadata_inventory_take
+	spec.on_metadata_inventory_move = spec.on_metadata_inventory_move or markets.defaults.on_metadata_inventory_move
+	spec.on_metadata_inventory_put = spec.on_metadata_inventory_put or markets.defaults.on_metadata_inventory_put
+	spec.on_metadata_inventory_take = spec.on_metadata_inventory_take or markets.defaults.on_metadata_inventory_take
 
 --	spec.on_construct = spec.on_construct or function(pos)
 --		local meta = minetest.get_meta(pos)
@@ -80,7 +80,7 @@ function economies.markets.register_market(name, spec)
 		local meta = minetest.get_meta(pos)
 	end
 
---	spec.on_punch = spec.on_punch or economies.markets.defaults.on_punch or function(pos, node, puncher, pointed_thing)
+--	spec.on_punch = spec.on_punch or markets.defaults.on_punch or function(pos, node, puncher, pointed_thing)
 --	end
 
 	minetest.register_node(name, spec)
