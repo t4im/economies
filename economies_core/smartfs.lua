@@ -199,8 +199,8 @@ function smartfs._makeState_(form,player,params,is_inv)
 		listbox = function(self,x,y,w,h,name)
 			return self:element("list", { pos={x=x,y=y}, size={w=w,h=h}, name=name })
 		end,
-		inventory = function(self,x,y,w,h,name,location,index)
-			return self:element("inventory", { pos={x=x,y=y}, size={w=w,h=h}, name=name, location=location, index=index })
+		inventory = function(self,x,y,w,h,name)
+			return self:element("inventory", { pos={x=x,y=y}, size={w=w,h=h}, name=name })
 		end,
 		element = function(self,typen,data)
 			local type = smartfs._edef[typen]
@@ -678,7 +678,7 @@ smartfs.element("list",{
 smartfs.element("inventory",{
 	build = function(self)
 		return "list["..
-			self.data.location..
+			(self.data.location or "current_player") ..
 			";"..
 			self.name..
 			";"..
@@ -701,11 +701,26 @@ smartfs.element("inventory",{
 	getSize = function(self,x,y)
 		return self.data.size
 	end,
+	-- available inventory locations
+	-- "current_player": Player to whom the menu is shown
+	-- "player:<name>": Any player
+	-- "nodemeta:<X>,<Y>,<Z>": Any node metadata
+	-- "detached:<name>": A detached inventory
+	-- "context" does not apply to smartfs, since there is no node-metadata as context available
 	setLocation = function(self,location)
 		self.data.location = location
 	end,
 	getLocation = function(self)
 		return self.data.location
+	end,
+	usePosition = function(self, pos)
+		self.data.location = string.format("nodemeta:%d,%d,%d", pos.x, pos.y, pos.z)
+	end,
+	usePlayer = function(self, name)
+		self.data.location = "player:" .. name
+	end,
+	useDetached = function(self, name)
+		self.data.location = "detached:" .. name
 	end,
 	setIndex = function(self,index)
 		self.data.index = index
