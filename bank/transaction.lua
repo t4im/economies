@@ -27,7 +27,6 @@ function bank.Transaction:new(object)
 	-- make sure we only save the names, not the objectref's, to avoid cycles during serialization
 	self.source = tostring(object.source)
 	self.target = tostring(object.target)
-	self.initiator = object.initiator or self.source
 	return object
 end
 
