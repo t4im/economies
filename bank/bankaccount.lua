@@ -1,6 +1,9 @@
 economies = economies or {}
 bank = bank or {}
 
+local bankPath = minetest.get_worldpath() .. DIR_DELIM .. economies.config:get("bank_path") .. DIR_DELIM
+local accountFile = function(name) return bankPath .. name .. ".account" end
+
 -- =============
 -- Account class
 -- =============
@@ -115,9 +118,6 @@ end
 -- Account management
 -- ==================
 bank.accounts = bank.accounts or {}
-
-local bankPath = minetest.get_worldpath() .. DIR_DELIM .. economies.config:get("bank_path") .. DIR_DELIM
-local accountFile = function(name) return bankPath .. name .. ".account" end
 
 -- initial run to load indexed information and check our bank path exists at all during startup
 function bank.initBankPath()

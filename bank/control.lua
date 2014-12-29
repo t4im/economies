@@ -68,13 +68,13 @@ minetest.register_chatcommand("bankadmin", {
 			elseif (command == "unfreeze") then
 				return economies.feedbackTo(name, account:unfreeze())
 			elseif (command == "deposit" and amount and privs.bank_admin) then
-				economies.logAction("%s depositing %d at %s", name, amount, account)
+				economies.logAction("%s depositing %d at %s", name, amount, accountName)
 				return economies.feedbackTo(name, account:deposit(amount))
 			elseif (command == "withdraw" and amount and privs.bank_admin) then
-				economies.logAction("%s withdrawing %d from %s", name, amount, account)
+				economies.logAction("%s withdrawing %d from %s", name, amount, accountName)
 				return economies.feedbackTo(name, account:withdraw(amount))
 			elseif (command == "set" and amount and privs.bank_admin) then
-				economies.logAction("%s setting %s to %d", name, account, amount)
+				economies.logAction("%s setting %s to %d", name, accountName, amount)
 				return economies.feedbackTo(name, account:set(amount))
 			end
 		end

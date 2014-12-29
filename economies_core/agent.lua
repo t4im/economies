@@ -40,15 +40,15 @@ function economies.Agent:assertMayInit(transaction)
 	-- * creating unnecessary accounts
 	-- * lost money during transaction due to typos
 	-- * transfers to alternative accounts without getting noticed
-	local targetPlayer = self:getRef()
-	if (not targetPlayer) then
-		self:notify(transaction.target .. " is currently offline.")
+	local targetPlayer = transaction:to():getOwner()
+	if (not targetPlayer:isOnline()) then
+		self:notify(targetPlayer.name .. " is currently offline.")
 		return false
 	end
 
 	-- if both players are from the same ip it might be a possible cheating attempt
 	-- since we only accept transfers to online players, this is bound to be noticed
-	if minetest.get_player_ip(self.name) == minetest.get_player_ip(other) then
+	if minetest.get_player_ip(self.name) == minetest.get_player_ip(targetPlayer.name) then
 		local type = transaction.getType()
 		transaction:from():freeze(string.format("attempt of %s-transaction %s to %s, having the same ip address", type, economies.formatMoney(amount), to))
 		transaction:to():freeze(string.format("target of %s-transaction attempt %s from %s, having the same ip address", type, economies.formatMoney(amount), from))
