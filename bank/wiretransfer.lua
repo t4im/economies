@@ -19,16 +19,15 @@ function bank.openWireFormspec(player)
 	local playername = player:get_player_name()
 	local account = bank.getAccount(playername)
 	local formspec = "size[10,7]"..
-		"label[0.75,0.75; Welcome " .. playername .. "]" ..
-		"label[5,0.75;" ..
-			"Balance: " .. account:printBalance() .. "\n" ..
-			"Frozen: " .. (account.frozen or "no") .. "]" ..
-		"label[0.75,2.5;Wire transfer]" ..
-		"field[1,4;8.25,0.75;subject;Subject (optional):;]" ..
-		"field[1,5;4,0.75;to;To:;]" ..
-		"field[5,5;2,0.75;amount;Amount:;0]" ..
-		"button[7,4.75;2,0.75;transfer;Transfer]"..
-		"button_exit[8,6;1.5,0.75;logout;Logout]"
+		"label[0.3,0.7; Welcome " .. playername .. "]" ..
+		"label[5,0.7;Balance: " .. account:printBalance() .. "]" ..
+		"box[0.3,2;9,3.7;#555]" ..
+		"label[0.7,2.5;Wire transfer]" ..
+		"field[1,4;8.3,0.7;subject;Subject (optional):;]" ..
+		"field[1,5;4,0.7;to;To:;]" ..
+		"field[5,5;2,0.7;amount;Amount:;0]" ..
+		"button[7,4.7;2,0.7;transfer;Transfer]"..
+		"button_exit[8,6;1.5,0.7;logout;Logout]"
 	minetest.show_formspec(playername, "bank:wire_formspec", formspec)
 end
 
