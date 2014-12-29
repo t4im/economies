@@ -10,8 +10,6 @@ bank.modpath = minetest.get_modpath("bank") .. DIR_DELIM
 
 -- load configuration
 dofile(bank.modpath .. "config.lua")
--- common helper functions
-dofile(bank.modpath .. "common.lua")
 
 -- load classes and related api
 dofile(bank.modpath .. "bankaccount.lua")
