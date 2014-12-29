@@ -1,5 +1,7 @@
 economies = economies or {}
 
+minetest.register_privilege("multiaccount_trading", "exempted from multiaccount trading preventions")
+
 -- =============
 -- Agent class
 -- =============
@@ -48,7 +50,10 @@ function economies.Agent:assertMayInit(transaction)
 
 	-- if both players are from the same ip it might be a possible cheating attempt
 	-- since we only accept transfers to online players, this is bound to be noticed
-	if minetest.get_player_ip(self.name) == minetest.get_player_ip(targetPlayer.name) then
+	if minetest.get_player_ip(self.name) == minetest.get_player_ip(targetPlayer.name) and
+			not (minetest.get_player_privs(self.name).multiaccount_trading
+			and minetest.get_player_privs(targetPlayer.name).multiaccount_trading) then
+
 		local type = transaction.getType()
 		transaction:from():freeze(string.format("attempt of %s-transaction %s to %s, having the same ip address", type, economies.formatMoney(amount), to))
 		transaction:to():freeze(string.format("target of %s-transaction attempt %s from %s, having the same ip address", type, economies.formatMoney(amount), from))
