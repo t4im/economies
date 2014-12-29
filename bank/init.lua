@@ -3,7 +3,7 @@
 -- allows storing and transferring funds between players
 --
 DIR_DELIM = DIR_DELIM or "/"
-economies = economies {}
+economies = economies or {}
 bank = bank or {}
 bank.version = 1.00
 bank.modpath = minetest.get_modpath("bank") .. DIR_DELIM

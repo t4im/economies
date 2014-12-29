@@ -1,5 +1,5 @@
-local previousTransfer = economies.realestate.transfer
-economies.realestate.transfer = function(pos, node, puncher)
+local previousTransfer = realestate.transfer
+realestate.transfer = function(pos, node, puncher)
 	local name = puncher:get_player_name()
 	local areaList = areas:getAreasAtPos(pos)
 	
