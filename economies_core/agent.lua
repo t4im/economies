@@ -1,6 +1,16 @@
 economies = economies or {}
 
+-- this privilege seem to be consistent over most other economic mods, so lets reuse them as well
+minetest.register_privilege("money", "Can interact with money (e.g. buy/sell things, wire transfer)")
+
 minetest.register_privilege("multiaccount_trading", "exempted from multiaccount trading preventions")
+
+-- used for notifications of malicious behavior
+function economies.isSupervisor(player)
+	local name = player:get_player_name()
+	local privs = minetest.get_player_privs(name)
+	return privs.kick or privs.ban or privs.bank_teller
+end
 
 -- =============
 -- Agent class
@@ -58,7 +68,7 @@ function economies.Agent:assertMayInit(transaction)
 		transaction:from():freeze(string.format("attempt of %s-transaction %s to %s, having the same ip address", type, economies.formatMoney(amount), to))
 		transaction:to():freeze(string.format("target of %s-transaction attempt %s from %s, having the same ip address", type, economies.formatMoney(amount), from))
 
-		economies.notifyAny(bank.isSupervisor,
+		economies.notifyAny(economies.isSupervisor,
 			"%s attempted %s-transaction with player of same ip-address: %s from %s to %s. The accounts were preventively frozen.",
 			self.name, type, economies.formatMoney(amount), from, to
 		)

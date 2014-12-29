@@ -1,6 +1,3 @@
--- this privilege seem to be consistent over most other economic mods, so lets reuse them as well
-minetest.register_privilege("money", "Can interact with money (e.g. buy/sell things, wire transfer)")
-
 minetest.register_privilege("bank_teller", {
 	description = "Can handle basic administrative banking tasks like freeze/unfreeze accounts or peek into other accounts",
 	give_to_singleplayer = false,
@@ -12,13 +9,6 @@ minetest.register_privilege("bank_admin", {
 
 economies = economies or {}
 bank = bank or {}
-
--- used for notifications of malicious behavior
-function bank.isSupervisor(player)
-	local name = player:get_player_name()
-	local privs = minetest.get_player_privs(name)
-	return privs.kick or privs.ban or privs.bank_teller
-end
 
 local bank_admin_params = "show/unfreeze <account> | freeze <account> <reason> | deposit/withdraw/set <account> <amount> | transfer <source> <target> <amount> [<subject>]"
 minetest.register_chatcommand("bankadmin", {
