@@ -17,7 +17,8 @@ end
 -- =============
  
 economies.Agent = {
-	name = nil
+	name = nil,
+	type = "player"
 }
 
 function economies.Agent:new(object)
@@ -28,14 +29,22 @@ function economies.Agent:new(object)
 	return object
 end
 
-function economies.Agent:getRef() return minetest.get_player_by_name(self.name) end
-function economies.Agent:isOnline() return minetest.get_player_by_name(self.name) end
+function economies.Agent:asOnlinePlayer() return minetest.get_player_by_name(self.name) end
 
 function economies.Agent:notify(message, ...)
 	if arg.n > 0
 		then message = message:format(unpack(arg))
 	end
-	minetest.chat_send_player(self.name, message)
+	if self.type == "player" then
+		local player = self:asOnlinePlayer()
+		if player then
+			minetest.chat_send_player(self.name, message)
+		else
+			-- TODO support mod's that allow for offline messages
+		end
+	else
+		economies.notifyAny(economies.isSupervisor, "@" .. self.name .. ": " .. message)
+	end
 end
 
 function economies.Agent:assertMayInit(transaction)
@@ -53,7 +62,7 @@ function economies.Agent:assertMayInit(transaction)
 	-- * lost money during transaction due to typos
 	-- * transfers to alternative accounts without getting noticed
 	local targetPlayer = transaction:to():getOwner()
-	if (not targetPlayer:isOnline()) then
+	if (not targetPlayer:asOnlinePlayer()) then
 		self:notify(targetPlayer.name .. " is currently offline.")
 		return false
 	end
