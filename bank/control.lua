@@ -17,7 +17,7 @@ bank = bank or {}
 function bank.isSupervisor(player)
 	local name = player:get_player_name()
 	local privs = minetest.get_player_privs(name)
-	return privs.ban or privs.bank_teller
+	return privs.kick or privs.ban or privs.bank_teller
 end
 
 local bank_admin_params = "show/unfreeze <account> | freeze <account> <reason> | deposit/withdraw/set <account> <amount> | transfer <source> <target> <amount> [<subject>]"
