@@ -3,8 +3,10 @@ bank = bank or {}
 
 function bank.wire(from, to, amount, subject)
 	local transaction = bank.Transaction:new{source=from, target=to, amount=amount, subject=subject}
-	transaction:from():getOwner():assertMayInit(transaction)
-	return transaction:commit()
+	if transaction:fromAgent():assertMayInit(transaction) then
+		return transaction:commit()
+	end
+	return false
 end
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)

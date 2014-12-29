@@ -13,6 +13,9 @@ bank.Transaction = {
 	target = nil,
 	amount = nil,
 	type = nil,
+	-- a different question as to from whome the transaction debits is:
+	-- who initated the transaction? might have been some admin enforcing it, or some process/mod/machine
+	-- if nil, the initiator is assumed to be the source
 	initiator = nil
 }
 
@@ -24,6 +27,7 @@ function bank.Transaction:new(object)
 	-- make sure we only save the names, not the objectref's, to avoid cycles during serialization
 	self.source = tostring(object.source)
 	self.target = tostring(object.target)
+	self.initiator = object.initiator or self.source
 	return object
 end
 
@@ -33,10 +37,8 @@ function bank.Transaction:printAmount() return economies.formatMoney(self.amount
 function bank.Transaction:from() return bank.getAccount(self.source) end
 function bank.Transaction:to() return bank.getAccount(self.target) end
 
--- a different question as to from whome the transaction debits is:
--- who initated the transaction? might have been some admin enforcing it, or some process/mod/machine
--- if nil, the initiator is assumed to be the source
-function bank.Transaction:initiator() return self.initiator or self.source end
+function bank.Transaction:fromAgent() return economies.Agent:new{name=self.source} end
+function bank.Transaction:toAgent() return economies.Agent:new{name=self.target} end
 
 function bank.Transaction:describe() return ("%s transfers %d (%s -> %s) %s"):format(self.initiator or "player", self.amount, self.source, self.target, self.subject or "-") end
 
