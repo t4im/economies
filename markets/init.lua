@@ -14,6 +14,7 @@ dofile(markets.modpath .. "config.lua")
 --dofile(economies.markets.modpath .. "components.lua")
 
 -- load markets
+dofile(markets.modpath .. "market_setup.lua")
 dofile(markets.modpath .. "market.lua")
 dofile(markets.modpath .. "market_stalls.lua")
 dofile(markets.modpath .. "bulk_vending_machines.lua")
