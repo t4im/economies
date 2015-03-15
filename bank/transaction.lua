@@ -1,4 +1,4 @@
-local economies, bank = economies, bank
+local economies, bank, core = economies, bank, core
 
 -- =================
 -- bank.Transaction class
@@ -48,7 +48,7 @@ function bank.Transaction:getType()
 	elseif self.initiator == self.target then
 		return "debit"
 	end
-	local privs = minetest.get_player_privs(self.initiator)
+	local privs = core.get_player_privs(self.initiator)
 	if privs.money then
 		if privs.bank_teller or privs.bank_admin then
 			return "admin"

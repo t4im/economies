@@ -3,7 +3,7 @@
 --
 markets = {
 	version = 1.00,
-	modpath = minetest.get_modpath("markets") .. DIR_DELIM
+	modpath = core.get_modpath("markets") .. DIR_DELIM
 }
 
 -- load configuraton

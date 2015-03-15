@@ -11,10 +11,10 @@ realestate.transfer = function(pos, node, puncher)
 end
 
 -- deprecate the old landrush sale block gracefully
-minetest.register_node("realestate:deprecated_landrush_sale_block", {
+core.register_node("realestate:deprecated_landrush_sale_block", {
 	tiles= { "default_wood.png^[crack:1:16" },
 	groups = { dig_immediate=3, not_in_creative_inventory=1 },
 	drop = "default:wood 5",
 })
-minetest.register_alias("landrush:sale_block", "realestate:deprecated_landrush_sale_block")
+core.register_alias("landrush:sale_block", "realestate:deprecated_landrush_sale_block")
 

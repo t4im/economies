@@ -1,16 +1,16 @@
 local economies, bank = economies, bank
 
-minetest.register_privilege("bank_teller", {
+core.register_privilege("bank_teller", {
 	description = "Can handle basic administrative banking tasks like freeze/unfreeze accounts or peek into other accounts",
 	give_to_singleplayer = false,
 })
-minetest.register_privilege("bank_admin", {
+core.register_privilege("bank_admin", {
 	description = "Can modify account balance.",
 	give_to_singleplayer = false,
 })
 
 local bank_admin_params = "show/unfreeze <account> | freeze <account> <reason> | deposit/withdraw/set <account> <amount> | transfer <source> <target> <amount> [<subject>]"
-minetest.register_chatcommand("bankadmin", {
+core.register_chatcommand("bankadmin", {
 	description = "Modify accounts",
 	params = bank_admin_params,
 	privs = {bank_teller=true},
@@ -22,7 +22,7 @@ minetest.register_chatcommand("bankadmin", {
 		local command, accountName = args[1], args[2]
 
 		if accountName then
-			local privs = minetest.get_player_privs(name)
+			local privs = core.get_player_privs(name)
 			if command == "transfer" and privs.bank_admin then
 				local target, transferAmount, subject = string.match(param, "transfer [^ ]+ ([^ ]+) ([0-9]+) ?(.*)")
 				if transferAmount and target then
@@ -72,7 +72,7 @@ minetest.register_chatcommand("bankadmin", {
 -- since several other economic mods use this command in this form, we want to support it for the users as well
 -- however administrative functions remain handled extra,
 -- which adds an additional layer of security against accidents by admins
-minetest.register_chatcommand("money", {
+core.register_chatcommand("money", {
 	description = "Show balance or pay <account> <amount> of money.",
 	params = "[pay <account> <amount>]",
 	privs = {money=true},

@@ -1,4 +1,4 @@
-local economies, bank = economies, bank
+local economies, bank, core = economies, bank, core
 
 function bank.wire(from, to, amount, subject)
 	local transaction = bank.Transaction:new{source=from, target=to, amount=amount, subject=subject}
@@ -8,7 +8,7 @@ function bank.wire(from, to, amount, subject)
 	return false
 end
 
-minetest.register_on_player_receive_fields(function(player, formname, fields)
+core.register_on_player_receive_fields(function(player, formname, fields)
 	if formname ~= "bank:wire_formspec" then return false end
 
 	if fields.transfer then
@@ -31,11 +31,11 @@ function bank.openWireFormspec(player)
 		"button[7,4.7;2,0.7;transfer;Transfer]"..
 		"button_exit[8,6;1.5,0.7;logout;Logout]",
 			playername, account:printBalance())
-	minetest.show_formspec(playername, "bank:wire_formspec", formspec)
+	core.show_formspec(playername, "bank:wire_formspec", formspec)
 end
 
 -- simple and direct wire command allowing to provide a subject
-minetest.register_chatcommand("wire", {
+core.register_chatcommand("wire", {
 	description = "wire transfer <amount> of money from <account> (optionally with subject).",
 	params = "<account> <amount> [<subject>]",
 	privs = {money=true},

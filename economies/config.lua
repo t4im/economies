@@ -1,4 +1,4 @@
-local economies = economies
+local economies, core = economies, core
 --
 -- configuration handling
 --
@@ -6,7 +6,7 @@ local economies = economies
 --
 
 -- set up configuration slurping
-economies.config = Settings(minetest.get_worldpath() .. DIR_DELIM .. "economies.conf")
+economies.config = Settings(core.get_worldpath() .. DIR_DELIM .. "economies.conf")
 function economies.register_config_defaults(defaults)
 	local config = economies.config
 	local config_table = config:to_table()
@@ -17,7 +17,7 @@ end
 
 -- register own config defaults
 economies.register_config_defaults({
-	debug = minetest.setting_getbool("debug_mods"),
+	debug = core.setting_getbool("debug_mods"),
 	currency_format = "%dcr",
 	currency_name = "credit",
 })

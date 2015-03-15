@@ -4,7 +4,7 @@
 --
 bank = {
 	version = 1.00,
-	modpath = minetest.get_modpath("bank") .. DIR_DELIM
+	modpath = core.get_modpath("bank") .. DIR_DELIM
 }
 
 -- load configuration

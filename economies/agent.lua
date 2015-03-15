@@ -1,14 +1,13 @@
-local economies = economies
+local economies, core = economies, core
 
 -- this privilege seem to be consistent over most other economic mods, so lets reuse them as well
-minetest.register_privilege("money", "Can interact with money (e.g. buy/sell things, wire transfer)")
-
-minetest.register_privilege("multiaccount_trading", "exempted from multiaccount trading preventions")
+core.register_privilege("money", "Can interact with money (e.g. buy/sell things, wire transfer)")
+core.register_privilege("multiaccount_trading", "exempted from multiaccount trading preventions")
 
 -- used for notifications of malicious behavior
 function economies.isSupervisor(player)
 	local name = player:get_player_name()
-	local privs = minetest.get_player_privs(name)
+	local privs = core.get_player_privs(name)
 	return privs.kick or privs.ban or privs.bank_teller
 end
 
@@ -29,15 +28,15 @@ function economies.Agent:new(object)
 	return object
 end
 
-function economies.Agent:asOnlinePlayer() return minetest.get_player_by_name(self.name) end
-function economies.Agent:isAvailable() return self.type ~= "player" or minetest.get_player_by_name(self.name) end
+function economies.Agent:asOnlinePlayer() return core.get_player_by_name(self.name) end
+function economies.Agent:isAvailable() return self.type ~= "player" or core.get_player_by_name(self.name) end
 
 function economies.Agent:notify(message, ...)
 	if (...) then message = message:format(...) end
 	if self.type == "player" then
 		local player = self:asOnlinePlayer()
 		if player then
-			minetest.chat_send_player(self.name, message)
+			core.chat_send_player(self.name, message)
 		else
 			-- TODO support mod's that allow for offline messages
 		end
@@ -70,9 +69,9 @@ function economies.Agent:assertMayInit(transaction)
 	-- if both players are from the same ip it might be a possible cheating attempt
 	-- since we only accept transfers to online players, this is bound to be noticed
 	if toAgent.type == "player"
-			and minetest.get_player_ip(self.name) == minetest.get_player_ip(toAgent.name)
-			and not (minetest.get_player_privs(self.name).multiaccount_trading
-				and minetest.get_player_privs(toAgent.name).multiaccount_trading) then
+			and core.get_player_ip(self.name) == core.get_player_ip(toAgent.name)
+			and not (core.get_player_privs(self.name).multiaccount_trading
+				and core.get_player_privs(toAgent.name).multiaccount_trading) then
 
 		local type = transaction.getType()
 		local formatedMoney = economies.formatMoney(amount)

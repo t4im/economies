@@ -18,7 +18,7 @@ markets.register_market("markets:treasure_box", {
 	},
 	groups = { snappy=2, choppy=2, oddly_breakable_by_hand=2, flammable=1 },
 	on_construct = function(pos)
-		local meta = minetest.get_meta(pos)
+		local meta = core.get_meta(pos)
 		meta:get_inventory():set_size("main", 4)
 	end,
 	node_box = {
@@ -37,7 +37,7 @@ markets.register_market("markets:treasure_box", {
 markets.register_market("markets:medium_stall", {
 	description = "medium market stall",
 	on_construct = function(pos)
-		local meta = minetest.get_meta(pos)
+		local meta = core.get_meta(pos)
 		meta:get_inventory():set_size("main", 32)
 	end,
 })

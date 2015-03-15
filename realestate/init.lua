@@ -3,7 +3,7 @@
 --
 realestate = realestate or {
 	version = 1.00,
-	modpath = minetest.get_modpath("realestate") .. DIR_DELIM
+	modpath = core.get_modpath("realestate") .. DIR_DELIM
 }
 
 -- load configuraton

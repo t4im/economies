@@ -1,6 +1,6 @@
 local economies, bank = economies, bank
 
-local worldpath = minetest.get_worldpath() .. DIR_DELIM
+local worldpath = core.get_worldpath() .. DIR_DELIM
 local import_path = economies.config:get("import_path")
 local import_type = economies.config:get("import_type")
 
@@ -36,7 +36,7 @@ end
 local function importBigTableAccount(name)
 	local input = io.open(worldpath .. import_path , "r")
 	if not input then return false end
-	local accounts =  minetest.deserialize(input:read("*all"))
+	local accounts =  core.deserialize(input:read("*all"))
 	io.close(output)
 	return importAccountTableEntry(name, accounts[name])
 end
@@ -45,7 +45,7 @@ end
 local function importBigTableAccount(name)
 	local input = io.open(worldpath .. import_path:format(name) , "r")
 	if not input then return false end
-	local accountTable =  minetest.deserialize(input:read("*all"))
+	local accountTable =  core.deserialize(input:read("*all"))
 	io.close(output)
 	return importAccountTableEntry(name, accountTable)
 end
@@ -62,7 +62,7 @@ function bank.importAccount(name)
 	end
 
 	if account then		
-		minetest.log("info", string.format("[Bank] imported account %s with %s", name, economies.formatMoney(balance)))
+		core.log("info", string.format("[Bank] imported account %s with %s", name, economies.formatMoney(balance)))
 		return account
 	end
 	return nil

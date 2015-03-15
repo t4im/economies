@@ -1,4 +1,4 @@
-local economies = economies
+local economies, core = economies, core
 
 local atm_model_bottom = {
 	type = "fixed",
@@ -18,7 +18,7 @@ local atm_model_top = {
 	}
 }
 
-minetest.register_node("bank:atm_bottom", {
+core.register_node("bank:atm_bottom", {
 	tiles = {
 		"bank_atm_entry.png",
 		"bank_atm_texture.png",
@@ -39,7 +39,7 @@ minetest.register_node("bank:atm_bottom", {
 		fixed = { -0.5, -0.5, -0.5, 0.5, 1.5, 0.5 }
 	},
 	on_construct = function(pos)
-		local meta = minetest.get_meta(pos)
+		local meta = core.get_meta(pos)
 		meta:set_string("infotext", "ATM")
 	end,
 	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
@@ -49,29 +49,29 @@ minetest.register_node("bank:atm_bottom", {
 		local pos, def = economies.get_base_node(pointed_thing)
 		if not def then return end
 		if def.on_rightclick then
-			return def.on_rightclick(pos, minetest.get_node(pos), placer, itemstack, pointed_thing)
+			return def.on_rightclick(pos, core.get_node(pos), placer, itemstack, pointed_thing)
 		end
 
-		local facedir = minetest.dir_to_facedir(placer:get_look_dir())
+		local facedir = core.dir_to_facedir(placer:get_look_dir())
 		local top_pos = { x = pos.x, y = pos.y + 1, z = pos.z }
 
 		if economies.buildable_to(pos, placer) and economies.buildable_to(top_pos, placer) then
 			local nodename = itemstack:get_name()
-			minetest.set_node(pos, { name = nodename, param2 = facedir })
-			minetest.set_node(top_pos, { name = "bank:atm_top", param2 = facedir })
+			core.set_node(pos, { name = nodename, param2 = facedir })
+			core.set_node(top_pos, { name = "bank:atm_top", param2 = facedir })
 			itemstack:take_item()
 			return itemstack
 		end
 	end,
 	after_dig_node = function(pos, oldnode, oldmetadata, digger)
 		local top_pos = { x = pos.x, y = pos.y + 1, z = pos.z }
-		if minetest.get_node(top_pos).name == "bank:atm_top" then
-			minetest.remove_node(top_pos)
+		if core.get_node(top_pos).name == "bank:atm_top" then
+			core.remove_node(top_pos)
 		end
 	end
 })
 
-minetest.register_node("bank:atm_top", {
+core.register_node("bank:atm_top", {
 	tiles = {
 		"bank_atm_texture.png",
 		"bank_atm_texture.png",

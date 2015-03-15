@@ -1,6 +1,6 @@
-local economies, bank = economies, bank
+local economies, bank, core = economies, bank, core
 
-local bankPath = minetest.get_worldpath() .. DIR_DELIM .. economies.config:get("bank_path") .. DIR_DELIM
+local bankPath = core.get_worldpath() .. DIR_DELIM .. economies.config:get("bank_path") .. DIR_DELIM
 local accountFile = function(name) return bankPath .. name .. ".account" end
 
 -- =============
@@ -35,7 +35,7 @@ function bank.Account:printBalance() return economies.formatMoney(self.balance) 
 -- return false if frozen with reason or true with 'nil' as reason
 function bank.Account:assertActive() return not self.frozen, self.frozen end
 -- either account or playerfile with money privilege must exist
-function bank.Account:exists() return (not self.transient) or minetest.get_player_privs(self.owner or self.name).money end
+function bank.Account:exists() return (not self.transient) or core.get_player_privs(self.owner or self.name).money end
 
 function bank.Account:describe()
 	return string.format("'%s' with %s. Frozen: %s", self.name, self:printBalance(), self.frozen or "no")
@@ -105,7 +105,7 @@ function bank.Account:save()
 	local output = io.open(path, "w")
 	-- remove transient flag direclty before serializing
 	self.transient = nil
-	output:write(minetest.serialize(self))
+	output:write(core.serialize(self))
 	io.close(output)
 	
 	-- update cache
@@ -140,7 +140,7 @@ function bank.loadAccount(name)
 	if not input then return nil end
 
 	economies.logDebug("loading account %s from %s", name, path)
-	local account = minetest.deserialize(input:read("*all"))
+	local account = core.deserialize(input:read("*all"))
 	io.close(input)
 
 	-- wrap it into a class
@@ -164,6 +164,6 @@ end
 
 -- remove the account from the cache, when the player leaves the game
 -- (crashing will obviously empty it too \o/)
-minetest.register_on_leaveplayer(function(player)
+core.register_on_leaveplayer(function(player)
 	bank.accounts[player:get_player_name()] = nil
 end)

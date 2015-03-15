@@ -5,7 +5,7 @@ local forsale_receive_fields = realestate.landsale.receive_fields
 local forsale_punch = realestate.landsale.punch
 local forsale_construct = realestate.landsale.construct
 
-minetest.register_node("realestate:forsale_sign", {
+core.register_node("realestate:forsale_sign", {
 	description = "For Sale sign",
 	inventory_image = "forsale_sign_inventory.png",
 	wield_image = "forsale_sign_inventory.png",
@@ -31,7 +31,7 @@ minetest.register_node("realestate:forsale_sign", {
 	on_punch = forsale_punch
 })
 
-minetest.register_node("realestate:forsale_sign_yard", {
+core.register_node("realestate:forsale_sign_yard", {
 	paramtype = "light",
 	sunlight_propagates = true,
 	paramtype2 = "facedir",
@@ -57,7 +57,7 @@ minetest.register_node("realestate:forsale_sign_yard", {
 	on_punch = forsale_punch
 })
 
-minetest.register_node("realestate:forsale_sign_hanging", {
+core.register_node("realestate:forsale_sign_hanging", {
 	paramtype = "light",
 	sunlight_propagates = true,
 	paramtype2 = "facedir",
@@ -84,7 +84,7 @@ minetest.register_node("realestate:forsale_sign_hanging", {
 	on_punch = forsale_punch
 })
 
-minetest.register_craft({
+core.register_craft({
 	output = 'realestate:forsale_sign',
 	recipe = {
 		{'dye:red', 'dye:white', 'dye:red'},
