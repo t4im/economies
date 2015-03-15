@@ -1,6 +1,6 @@
 local economies, bank = economies, bank
 
-local worldpath = minetest.get_worldpath() .. "/"
+local worldpath = minetest.get_worldpath() .. DIR_DELIM
 local import_path = economies.config:get("import_path")
 local import_type = economies.config:get("import_type")
 
