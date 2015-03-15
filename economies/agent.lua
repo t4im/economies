@@ -33,9 +33,7 @@ function economies.Agent:asOnlinePlayer() return minetest.get_player_by_name(sel
 function economies.Agent:isAvailable() return self.type ~= "player" or minetest.get_player_by_name(self.name) end
 
 function economies.Agent:notify(message, ...)
-	if arg.n > 0
-		then message = message:format(unpack(arg))
-	end
+	if (...) then message = message:format(...) end
 	if self.type == "player" then
 		local player = self:asOnlinePlayer()
 		if player then
