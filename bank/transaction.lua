@@ -1,5 +1,4 @@
-economies = economies or {}
-bank = bank or {}
+local economies, bank = economies, bank
 
 -- =================
 -- bank.Transaction class
@@ -100,10 +99,10 @@ function bank.Transaction:isLegit()
 	end
 
 	-- check if source is frozen
-	if (from.frozen) then
+	if from.frozen then
 		return false, "The originating account is currently frozen."
 	-- check if target is frozen
-	elseif (to.frozen) then
+	elseif to.frozen then
 		return false, "The target account is currently frozen."
 	end
 

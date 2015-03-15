@@ -1,5 +1,4 @@
-economies = economies or {}
-bank = bank or {}
+local economies, bank = economies, bank
 
 -- while this might not be abused to steal money,
 -- it might very well be used to spam other players with debit requests
@@ -40,12 +39,13 @@ function bank.openDebitFormspec(transaction)
 	local playername = transaction.source
 	local greeting = ("Hello %s. Your balance is %s\n%s asks you for a payment of %s.")
 			:format(playername, transaction:from():printBalance(), transaction.target, transaction:printAmount())
-	local formspec = "size[7,5]"..
-		"label[0.5,0.75;" .. greeting .. "]" ..
-		"label[0.5,2;Subject:\n " .. minetest.formspec_escape(transaction.subject) .. "]" ..
-		"field[0.75,4;2,0.75;amount;Amount:;" .. transaction.amount .. "]" ..
+	local formspec = string.format("size[7,5]"..
+		"label[0.5,0.75;%s]" ..
+		"label[0.5,2;Subject:\n%s]" ..
+		"field[0.75,4;2,0.75;amount;Amount:;%d]" ..
 		"button_exit[2.75,3.7;1.5,0.75;accept;Transfer]"..
-		"button_exit[5,3.7;1.5,0.75;deny;Cancel]"
+		"button_exit[5,3.7;1.5,0.75;deny;Cancel]",
+			greeting, minetest.formspec_escape(transaction.subject), transaction.amount)
 
 	if debit_orders[playername] then
 		minetest.chat_send_player(transaction.target, playername .. " is still being processed for another direct debit. Please try again later.")
@@ -64,7 +64,7 @@ minetest.register_chatcommand("debit", {
 		local account, amount, subject = string.match(param, "([^ ]+) ([0-9]+) (.+)")
 		amount = tonumber(amount)
 
-		if (account and amount and subject) then
+		if account and amount and subject then
 			return bank.debit(account, name, amount, subject)
 		end
 		return false, "Usage: <account> <amount> <subject>"

@@ -1,3 +1,5 @@
+local economies, bank = economies, bank
+
 minetest.register_privilege("bank_teller", {
 	description = "Can handle basic administrative banking tasks like freeze/unfreeze accounts or peek into other accounts",
 	give_to_singleplayer = false,
@@ -6,9 +8,6 @@ minetest.register_privilege("bank_admin", {
 	description = "Can modify account balance.",
 	give_to_singleplayer = false,
 })
-
-economies = economies or {}
-bank = bank or {}
 
 local bank_admin_params = "show/unfreeze <account> | freeze <account> <reason> | deposit/withdraw/set <account> <amount> | transfer <source> <target> <amount> [<subject>]"
 minetest.register_chatcommand("bankadmin", {
@@ -24,11 +23,11 @@ minetest.register_chatcommand("bankadmin", {
 
 		if accountName then
 			local privs = minetest.get_player_privs(name)
-			if (command == "transfer" and privs.bank_admin) then
+			if command == "transfer" and privs.bank_admin then
 				local target, transferAmount, subject = string.match(param, "transfer [^ ]+ ([^ ]+) ([0-9]+) ?(.*)")
-				if(transferAmount and target) then
+				if transferAmount and target then
 					-- add the information, that this was an admin action and by whome
-					subject = name .. " enforced transfer. " .. (subject or "")
+					subject = string.format("%s enforced transfer. %s", name, subject or "")
 					return bank.Transaction:new{
 						initiator=name,
 						source=accountName, target=target,
@@ -38,7 +37,7 @@ minetest.register_chatcommand("bankadmin", {
 			end
 
 			local account = bank.getAccount(accountName)
-			if (command == "freeze" and args[3]) then
+			if command == "freeze" and args[3] then
 				-- args[3] is just the first word though enough for the test
 				local reason = string.match(param, "freeze [^ ]+ (.+)")
 				return account:freeze(reason)
@@ -46,21 +45,21 @@ minetest.register_chatcommand("bankadmin", {
 
 			local amount = tonumber(args[3])
 
-			if (command == "show") then
+			if command == "show" then
 				local output = account:describe()
 				if account.transient then
 					output = output .. "\n  account is transient"
 				end
 				return true, output
-			elseif (command == "unfreeze") then
+			elseif command == "unfreeze" then
 				return account:unfreeze()
-			elseif (command == "deposit" and amount and privs.bank_admin) then
+			elseif command == "deposit" and amount and privs.bank_admin then
 				economies.logAction("%s depositing %d at %s", name, amount, accountName)
 				return account:deposit(amount)
-			elseif (command == "withdraw" and amount and privs.bank_admin) then
+			elseif command == "withdraw" and amount and privs.bank_admin then
 				economies.logAction("%s withdrawing %d from %s", name, amount, accountName)
 				return account:withdraw(amount)
-			elseif (command == "set" and amount and privs.bank_admin) then
+			elseif command == "set" and amount and privs.bank_admin then
 				economies.logAction("%s setting %s to %d", name, accountName, amount)
 				return account:set(amount)
 			end
@@ -81,7 +80,7 @@ minetest.register_chatcommand("money", {
 		-- /money
 		if param == "" then
 			local account = bank.getAccount(name)
-			if (account.frozen) then
+			if account.frozen then
 				return false, "Your account is currently frozen."
 			end
 			return true, account:printBalance()
@@ -92,7 +91,7 @@ minetest.register_chatcommand("money", {
 		amount = tonumber(amount)
 
 		-- /money pay <account> <amount>
-		if (command == "pay" and target and amount) then
+		if command == "pay" and target and amount then
 			return bank.wire(name, target, amount)
 		else
 			return false, "Invalid parameters (see /help money)"

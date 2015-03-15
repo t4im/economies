@@ -1,3 +1,5 @@
+local economies = economies
+
 local atm_model_bottom = {
 	type = "fixed",
 	fixed = {

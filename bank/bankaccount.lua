@@ -1,5 +1,4 @@
-economies = economies or {}
-bank = bank or {}
+local economies, bank = economies, bank
 
 local bankPath = minetest.get_worldpath() .. DIR_DELIM .. economies.config:get("bank_path") .. DIR_DELIM
 local accountFile = function(name) return bankPath .. name .. ".account" end
@@ -34,7 +33,7 @@ end
 
 function bank.Account:printBalance() return economies.formatMoney(self.balance) end
 -- return false if frozen with reason or true with 'nil' as reason
-function bank.Account:assertActive()	return not self.frozen, self.frozen end
+function bank.Account:assertActive() return not self.frozen, self.frozen end
 -- either account or playerfile with money privilege must exist
 function bank.Account:exists() return (not self.transient) or minetest.get_player_privs(self.owner or self.name).money end
 
@@ -43,7 +42,7 @@ function bank.Account:describe()
 end
 
 function bank.Account:assertSolvency(amount)
-	if(amount > self.balance) then
+	if amount > self.balance then
 		return false, string.format("Not enough funds. There is only %s available.", self:printBalance())
 	end
 	return true
@@ -122,7 +121,7 @@ bank.accounts = bank.accounts or {}
 -- initial run to load indexed information and check our bank path exists at all during startup
 function bank.initBankPath()
 	local input = io.open(bankPath .. ".index", "w")
-	if(not input) then return false end
+	if not input then return false end
 	io.close(input)
 	return true
 end
@@ -138,7 +137,7 @@ function bank.loadAccount(name)
 	local path = accountFile(name)
 
 	local input = io.open(path, "r")
-	if(not input) then return nil end
+	if not input then return nil end
 
 	economies.logDebug("loading account %s from %s", name, path)
 	local account = minetest.deserialize(input:read("*all"))

@@ -1,4 +1,4 @@
-bank = bank or {}
+local economies, bank = economies, bank
 
 local worldpath = minetest.get_worldpath() .. "/"
 local import_path = economies.config:get("import_path")

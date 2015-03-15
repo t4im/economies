@@ -1,3 +1,5 @@
+local economies = economies
+
 function economies.formatMoney(amount)
 	return economies.config:get("currency_format"):format(amount)
 end
@@ -13,7 +15,7 @@ function economies.sanitizeAmount(amount)
 	amount = math.ceil(amount)
 
 	-- we generally don't allow operations on negative values
-	if(amount < 0) then
+	if amount < 0 then
 		return nil, "You must not pass a negative amount."
 	end
 

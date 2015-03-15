@@ -24,7 +24,7 @@ markets.defaults = {
 			economies.logAction("illegal inventory-put attempt by %s at %s", player_name, minetest.pos_to_string(pos))
 			return 0
 		end
-		if(listname == "item_type") then
+		if listname == "item_type" then
 			local virtual_stack = ItemStack(stack)
 			virtual_stack:set_count(1)
 			minetest.get_meta(pos):get_inventory():set_stack(listname, index, virtual_stack)
@@ -40,7 +40,7 @@ markets.defaults = {
 			economies.logAction("illegal inventory-take attempt by %s at %s", player_name, minetest.pos_to_string(pos))
 			return 0
 		end
-		if(listname == "item_type") then
+		if listname == "item_type" then
 			minetest.get_meta(pos):get_inventory():set_stack(listname, index, ItemStack(""))
 			return 0
 		end

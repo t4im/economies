@@ -1,7 +1,7 @@
 --
 --
-DIR_DELIM = DIR_DELIM or "/"
-economies = economies or {}
+DIR_DELIM = rawget(_G, "DIR_DELIM") or "/"
+economies = rawget(_G, "economies") or {}
 economies.modpath = minetest.get_modpath("economies") .. DIR_DELIM
 
 -- semantic versioning

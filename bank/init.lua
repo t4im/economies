@@ -2,11 +2,10 @@
 -- Banking accounts for players
 -- allows storing and transferring funds between players
 --
-DIR_DELIM = DIR_DELIM or "/"
-economies = economies or {}
-bank = bank or {}
-bank.version = 1.00
-bank.modpath = minetest.get_modpath("bank") .. DIR_DELIM
+bank = {
+	version = 1.00,
+	modpath = minetest.get_modpath("bank") .. DIR_DELIM
+}
 
 -- load configuration
 dofile(bank.modpath .. "config.lua")

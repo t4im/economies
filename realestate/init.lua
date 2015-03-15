@@ -1,11 +1,10 @@
 --
 --
 --
-DIR_DELIM = DIR_DELIM or "/"
-economies = economies or {}
-realestate = realestate or {}
-realestate.version = 1.00
-realestate.modpath = minetest.get_modpath("realestate") .. DIR_DELIM
+realestate = realestate or {
+	version = 1.00,
+	modpath = minetest.get_modpath("realestate") .. DIR_DELIM
+}
 
 -- load configuraton
 dofile(realestate.modpath .. "config.lua")

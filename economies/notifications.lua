@@ -1,4 +1,4 @@
-economies = economies or {}
+local economies = economies
 
 --
 -- Player notification

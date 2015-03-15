@@ -1,5 +1,4 @@
-economies = economies or {}
-bank = bank or {}
+local economies, bank = economies, bank
 
 function bank.wire(from, to, amount, subject)
 	local transaction = bank.Transaction:new{source=from, target=to, amount=amount, subject=subject}
@@ -21,16 +20,17 @@ end)
 function bank.openWireFormspec(player)
 	local playername = player:get_player_name()
 	local account = bank.getAccount(playername)
-	local formspec = "size[10,7]"..
-		"label[0.3,0.7; Welcome " .. playername .. "]" ..
-		"label[5,0.7;Balance: " .. account:printBalance() .. "]" ..
+	local formspec = string.format("size[10,7]"..
+		"label[0.3,0.7; Welcome %s]" ..
+		"label[5,0.7;Balance: %s]" ..
 		"box[0.3,2;9,3.7;#555]" ..
 		"label[0.7,2.5;Wire transfer]" ..
 		"field[1,4;8.3,0.7;subject;Subject (optional):;]" ..
 		"field[1,5;4,0.7;to;To:;]" ..
 		"field[5,5;2,0.7;amount;Amount:;0]" ..
 		"button[7,4.7;2,0.7;transfer;Transfer]"..
-		"button_exit[8,6;1.5,0.7;logout;Logout]"
+		"button_exit[8,6;1.5,0.7;logout;Logout]",
+			playername, account:printBalance())
 	minetest.show_formspec(playername, "bank:wire_formspec", formspec)
 end
 
@@ -43,7 +43,7 @@ minetest.register_chatcommand("wire", {
 		local account, amount, subject = string.match(param, "([^ ]+) ([0-9]+) ?(.*)")
 		amount = tonumber(amount)
 
-		if (account and amount and subject) then
+		if account and amount and subject then
 			return bank.wire(name, account, amount, subject)
 		end
 		return false, "Usage: <account> <amount> [<subject>])"

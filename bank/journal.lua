@@ -1,4 +1,4 @@
-bank = bank or {}
+local economies, bank = economies, bank
 
 -- =============
 -- Journal class

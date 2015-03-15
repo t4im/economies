@@ -1,4 +1,4 @@
-economies = economies or {}
+local economies = economies
 
 -- this privilege seem to be consistent over most other economic mods, so lets reuse them as well
 minetest.register_privilege("money", "Can interact with money (e.g. buy/sell things, wire transfer)")
@@ -53,7 +53,7 @@ function economies.Agent:assertMayInit(transaction)
 	-- * transfers to alternative accounts without getting noticed
 	-- * unnecessary disk i/o
 	local toAgent = transaction:toAgent()
-	if (not toAgent:isAvailable()) then
+	if not toAgent:isAvailable() then
 		self:notify("The target %s is currently unavailable.", toAgent.name)
 		return false
 	end
