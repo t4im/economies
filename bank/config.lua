@@ -19,6 +19,6 @@ economies.register_config_defaults({
 })
 
 -- optional dependency support
-economies.with_plastic = minetest.get_modpath("homedecore") ~= nil
-			or minetest.get_modpath("pipeworks") ~= nil -- defines plastic if homedecore is not available
+economies.with_plastic = minetest.get_modpath("homedecor") ~= nil
+			or minetest.get_modpath("pipeworks") ~= nil -- defines plastic if homedecor is not available
 economies.with_compressor = minetest.get_modpath("technic") ~= nil
