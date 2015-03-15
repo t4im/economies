@@ -2,13 +2,10 @@
 --
 DIR_DELIM = DIR_DELIM or "/"
 economies = economies or {}
-economies.modpath = minetest.get_modpath("economies_core") .. DIR_DELIM
+economies.modpath = minetest.get_modpath("economies") .. DIR_DELIM
 
 -- semantic versioning
-economies.version = economies.version or {}
-economies.version.major = 0
-economies.version.minor = 0
-economies.version.patch = 0
+economies.version = { major = 0, minor = 0, patch = 0 }
 
 -- load configuration
 dofile(economies.modpath .. "config.lua")
