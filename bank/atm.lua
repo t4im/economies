@@ -44,20 +44,25 @@ minetest.register_node("bank:atm_bottom", {
 		bank.openWireFormspec(clicker)
 	end,
 	on_place = function(itemstack, placer, pointed_thing)
-		local pos = economies.basePos(pointed_thing)
-		local facedir = minetest.dir_to_facedir(placer:get_look_dir())
-		local top_pos = economies.topPosOf(pos)
+		local pos, def = economies.get_base_node(pointed_thing)
+		if not def then return end
+		if def.on_rightclick then
+			return def.on_rightclick(pos, minetest.get_node(pos), placer, itemstack, pointed_thing)
+		end
 
-		if economies.buildableTo(pos, placer) and economies.buildableTo(top_pos, placer) then
+		local facedir = minetest.dir_to_facedir(placer:get_look_dir())
+		local top_pos = { x = pos.x, y = pos.y + 1, z = pos.z }
+
+		if economies.buildable_to(pos, placer) and economies.buildable_to(top_pos, placer) then
 			local nodename = itemstack:get_name()
-			minetest.add_node(pos, { name = nodename, param2 = facedir })
-			minetest.add_node(top_pos, { name = "bank:atm_top", param2 = facedir })
+			minetest.set_node(pos, { name = nodename, param2 = facedir })
+			minetest.set_node(top_pos, { name = "bank:atm_top", param2 = facedir })
 			itemstack:take_item()
 			return itemstack
 		end
 	end,
 	after_dig_node = function(pos, oldnode, oldmetadata, digger)
-		local top_pos = economies.topPosOf(pos)
+		local top_pos = { x = pos.x, y = pos.y + 1, z = pos.z }
 		if minetest.get_node(top_pos).name == "bank:atm_top" then
 			minetest.remove_node(top_pos)
 		end
