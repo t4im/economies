@@ -42,7 +42,7 @@ function economies.Agent:notify(message, ...)
 			-- TODO support mod's that allow for offline messages
 		end
 	else
-		economies.notifyAny(economies.isSupervisor, "@" .. self.name .. ": " .. message)
+		economies.notifyAny(economies.isSupervisor, "@%s: %s", self.name, message)
 	end
 end
 
@@ -54,7 +54,7 @@ function economies.Agent:assertMayInit(transaction)
 	-- * unnecessary disk i/o
 	local toAgent = transaction:toAgent()
 	if (not toAgent:isAvailable()) then
-		self:notify("The target " .. toAgent.name .. " is currently unavailable.")
+		self:notify("The target %s is currently unavailable.", toAgent.name)
 		return false
 	end
 

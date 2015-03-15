@@ -10,11 +10,12 @@ function bank.wire(from, to, amount, subject)
 end
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
-	if formname ~= "bank:wire_formspec" then return end
+	if formname ~= "bank:wire_formspec" then return false end
 
 	if fields.transfer then
 		bank.wire(player:get_player_name(), fields.to, fields.amount, fields.subject)
 	end
+	return true
 end)
 
 function bank.openWireFormspec(player)
@@ -45,8 +46,6 @@ minetest.register_chatcommand("wire", {
 		if (account and amount and subject) then
 			return bank.wire(name, account, amount, subject)
 		end
-
-		minetest.chat_send_player(name, "Usage: <account> <amount> [<subject>])")
-		return false
+		return false, "Usage: <account> <amount> [<subject>])"
     end,
 })

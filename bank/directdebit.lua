@@ -19,7 +19,7 @@ end
 local debit_orders = {}
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
-	if formname ~= "bank:debit_formspec" then return end
+	if formname ~= "bank:debit_formspec" then return false end
 	local playername = player:get_player_name()
 
 	local transaction = debit_orders[playername]
@@ -33,6 +33,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	else
 		minetest.chat_send_player(transaction.target, "Your direct debit was denied by " .. playername)
 	end
+	return true
 end)
 
 function bank.openDebitFormspec(transaction)
@@ -66,8 +67,6 @@ minetest.register_chatcommand("debit", {
 		if (account and amount and subject) then
 			return bank.debit(account, name, amount, subject)
 		end
-
-		minetest.chat_send_player(name, "Usage: <account> <amount> <subject>")
-		return false
+		return false, "Usage: <account> <amount> <subject>"
     end,
 })
